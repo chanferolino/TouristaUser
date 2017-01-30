@@ -1,0 +1,7 @@
+#Thu Nov 24 01:50:04 CST 2016
+base.0=C\:\\Users\\Christian\\AndroidStudioProjects\\Tourista\\Tourista\\QuickTaxStaff\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10\\instant-run-bootstrap_2e76808c3100aeeb44ab9590616760789b065d5e
+renamed.1=classes2.dex
+renamed.0=classes.dex
+file.1=C\:\\Users\\Christian\\AndroidStudioProjects\\Tourista\\Tourista\\QuickTaxStaff\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10\\instant-run_655ce6fb9ff40bf0c404e45b29f13427f44353db\\classes.dex
+base.1=C\:\\Users\\Christian\\AndroidStudioProjects\\Tourista\\Tourista\\QuickTaxStaff\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10\\instant-run_655ce6fb9ff40bf0c404e45b29f13427f44353db
+file.0=C\:\\Users\\Christian\\AndroidStudioProjects\\Tourista\\Tourista\\QuickTaxStaff\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10\\instant-run-bootstrap_2e76808c3100aeeb44ab9590616760789b065d5e\\classes.dex

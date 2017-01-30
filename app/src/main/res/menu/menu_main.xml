@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+        <item
+            android:id="@+id/bottombar1"
+            android:icon="@mipmap/ic_discover"
+            android:title="Explore"
+
+            />
+        <item
+            android:id="@+id/bottombar2"
+            android:icon="@mipmap/ic_explore"
+            android:title="Discover" />
+
+        <item
+            android:id="@+id/bottombar3"
+            android:icon="@mipmap/ic_tours"
+            android:title="Tours" />
+
+        <item
+            android:id="@+id/bottombar4"
+            android:icon="@mipmap/ic_passport"
+            android:title="Passport" />
+
+
+
+</menu>

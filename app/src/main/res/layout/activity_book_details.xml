@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:map="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_book_details"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.touristadev.tourista.activities.BookDetailsActivity">
+<TextView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/bookedTitleTG"
+    android:layout_below="@+id/map"
+    android:text="Tour Guides"
+   android:gravity="center"
+    android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
+    <FrameLayout
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="250dp" />
+
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_below="@+id/bookedTitleTG"
+        android:layout_alignParentStart="true" />
+
+    <Button android:layout_height="100dp"
+    android:layout_width="133dp"
+    android:text="End Tour"
+    android:id="@+id/btnEnd"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/fragment_container" />
+
+    <Button android:layout_height="100dp"
+        android:text="View Itinerary"
+        android:id="@+id/btnViewTour"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/fragment_container"
+        android:layout_toEndOf="@+id/btnAddComment"
+        android:layout_width="125dp" />
+
+    <Button android:layout_height="100dp"
+        android:text="Add Comment"
+        android:id="@+id/btnAddComment"
+        android:layout_width="125dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/fragment_container" />
+
+</RelativeLayout>

@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_create_custom_package"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.touristadev.tourista.activities.CustomPackageActivity"
+    tools:showIn="@layout/activity_create_custom_package">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <ImageView
+        app:srcCompat="@mipmap/ic_launcher"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/imageView3"
+        android:layout_width="175dp"
+        android:layout_height="200dp" />
+
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/txtCustomPackName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter Package Name"
+        app:met_floatingLabel="highlight"
+        android:layout_toEndOf="@+id/imageView3" />
+
+
+    <com.jaredrummler.materialspinner.MaterialSpinner
+
+        android:id="@+id/spinCustomLang"
+        android:layout_width="match_parent"
+
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txt6"
+        android:layout_toEndOf="@+id/imageView3" />
+
+
+    <TextView
+
+        android:text="Select number of Tour Guides "
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:id="@+id/txt4"
+        android:layout_marginTop="15dp"
+        android:layout_below="@+id/imageView3"
+        android:layout_alignParentStart="true" />
+
+        <com.jaredrummler.materialspinner.MaterialSpinner
+        android:id="@+id/spnCustomTourGuides"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txt4"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/txt6" />
+
+        <TextView
+        android:text="Select preffered Language"
+            android:layout_marginTop="15dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:id="@+id/txt6"
+        android:layout_below="@+id/edtCustomDate"
+        android:layout_above="@+id/spnCustomTourGuides"
+        android:layout_toEndOf="@+id/txt4"
+        android:layout_alignTop="@+id/txt4" />
+
+        <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:background="@drawable/background_border"
+        android:layout_below="@+id/spinCustomLang"
+        android:id="@+id/relLay1"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="8dp"
+        />
+
+    <TextView
+        android:text="Description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/relLay1"
+        android:layout_alignParentStart="true"
+        android:id="@+id/textView9" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="100dp"
+        android:hint="Enter Description here"
+        android:ems="10"
+        android:layout_below="@+id/textView9"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="11dp"
+        android:id="@+id/customDesc"
+        android:layout_alignParentEnd="true" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:background="@drawable/background_border"
+        android:layout_below="@+id/customDesc"
+        android:id="@+id/relLay2"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="8dp"
+
+        />
+    <TextView
+        android:layout_marginTop="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:text="Package Itinerary"
+        android:layout_marginLeft="15dp"
+        android:textSize="20sp"
+        android:layout_below="@+id/relLay2"
+        android:id="@+id/TGActivityTitle"/>
+    <ListView
+        android:divider="@null"
+        android:dividerHeight="0dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/CustomPackageItineraryListView"
+        android:layout_marginTop="5dp"
+        android:layout_below="@+id/TGActivityTitle"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:background="@drawable/background_border"
+            android:layout_below="@+id/customDesc"
+            android:id="@+id/relLay"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="8dp"
+
+            />
+        <TextView
+            android:layout_marginTop="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="Price: "
+            android:layout_marginLeft="80dp"
+            android:textSize="20sp"
+            android:layout_below="@+id/CustomPackageItineraryListView"
+            android:gravity="center"/>
+        <TextView
+            android:layout_marginTop="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text=" "
+            android:id="@+id/txtCustomPrice"
+            android:layout_marginLeft="140dp"
+            android:textSize="20sp"
+            android:layout_below="@+id/CustomPackageItineraryListView" />
+        <Button
+            android:id="@+id/btnBook"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Book now!"
+            android:layout_below="@+id/txtCustomPrice"
+            />
+
+        <TextView
+
+            android:text="Number of attendees"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:id="@+id/textView8"
+            android:layout_below="@+id/txtCustomDays"
+            android:layout_alignParentEnd="true" />
+
+        <com.jaredrummler.materialspinner.MaterialSpinner
+            android:id="@+id/spinPax"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView8"
+            android:layout_toEndOf="@+id/imageView3" />
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Date"
+        android:id="@+id/edtCustomDate"
+        android:focusable="false"
+        android:textSize="18sp"
+        app:met_baseColor="@android:color/black"
+        app:met_floatingLabel="highlight"
+        app:met_maxCharacters="20"
+        app:met_primaryColor="@color/tourColor"
+        app:met_singleLineEllipsis="true"
+            android:layout_below="@+id/spinPax"
+            android:layout_toEndOf="@+id/imageView3" />
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+
+            android:id="@+id/txtCustomDays"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Number of Days"
+            app:met_floatingLabel="highlight"
+            android:inputType="number"
+            style="android:editTextStyle"
+            android:layout_below="@+id/txtCustomPackName"
+            android:layout_alignParentEnd="true"
+            android:layout_toEndOf="@+id/txt4" />
+    </RelativeLayout>
+</ScrollView>

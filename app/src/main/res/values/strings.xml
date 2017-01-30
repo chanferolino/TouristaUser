@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">Tourista</string>
+    <string name="facebook_app_id">376098946064922</string>
+    <string name="fb_login_protocol_scheme">fb376098946064922</string>
+    <string name="sign_in">SIGN IN</string>
+    <string name="register">REGISTER</string>
+    <string name="title_activity_register">Register</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="email">Email</string>
+    <string name="register2">Register</string>
+    <string name="by_clicking_proceed_you_agree_to_our">By clicking proceed, you agree to our</string>
+    <string name="terms_conditions_and_privacy_policy"><u><![CDATA[Terms & Conditions and Privacy Policy]]></u></string>
+    <string name="title_activity_tours">ToursActivity</string>
+
+    <string name="title_activity_explore">ExploreActivity</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_discover">Map</string>
+    <string name="title_activity_spot">SpotActivity</string>
+    <string name="title_activity_passport">PassportActivity</string>
+    <string-array name="query_suggestions">
+        <item>Cebu City</item>
+        <item>Manila</item>
+        <item>Tacloban City</item>
+        <item>Davao City</item>
+    </string-array>
+    <string name="title_activity_book_details">Map</string>
+    <string name="title_activity_create_custom_package">CreateCustomPackageActivity</string>
+    <string name="title_activity_dummy">DummyAct</string>
+</resources>

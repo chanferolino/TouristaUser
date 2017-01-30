@@ -1,0 +1,167 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    android:background="@color/colorTextIcons"
+    tools:context="com.touristadev.tourista.fragments.ForYouFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:layout_marginTop="12dp"
+            android:orientation="vertical">
+
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/viewPagerTours"
+                android:layout_width="match_parent"
+                android:layout_height="230dp"
+                android:layout_below="@+id/txtTour"
+                android:clipToPadding="false"
+                android:overScrollMode="never"
+                android:paddingBottom="10dp"
+                android:paddingEnd="40dp"
+                android:paddingLeft="40dp"
+                android:paddingRight="40dp"
+                android:paddingStart="40dp"  />
+
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/viewPagerSpot"
+                android:layout_width="match_parent"
+                android:layout_height="230dp"
+                android:layout_below="@+id/txtSpot"
+                android:clipToPadding="false"
+                android:overScrollMode="never"
+                android:paddingBottom="10dp"
+                android:paddingEnd="40dp"
+                android:paddingLeft="40dp"
+                android:paddingRight="40dp"
+                android:paddingStart="40dp"  />
+
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/viewPagerDeals"
+                android:layout_width="match_parent"
+                android:layout_height="230dp"
+                android:layout_below="@+id/txtDeals"
+                android:clipToPadding="false"
+                android:overScrollMode="never"
+                android:paddingBottom="10dp"
+                android:paddingEnd="40dp"
+                android:paddingLeft="40dp"
+                android:paddingRight="40dp"
+                android:paddingStart="40dp" />
+            <android.support.v4.view.ViewPager
+                android:id="@+id/viewPagerRecommended"
+                android:layout_width="match_parent"
+                android:layout_height="230dp"
+                android:layout_below="@+id/txtRecommendedPackage"
+                android:clipToPadding="false"
+                android:overScrollMode="never"
+                android:paddingBottom="10dp"
+                android:paddingEnd="40dp"
+                android:paddingLeft="40dp"
+                android:paddingRight="40dp"
+                android:paddingStart="40dp" />
+
+            <TextView
+                android:id="@+id/txtRecommendedPackage"
+                android:textColor="@color/colorPrimaryText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/txtDeals"
+                android:paddingBottom="10dp"
+                android:layout_below="@+id/viewPagerDeals"
+                android:gravity="center"
+                android:text="Recommended Packages"
+                android:textSize="18sp" />
+            <TextView
+                android:id="@+id/txtDeals"
+                android:textColor="@color/colorPrimaryText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/txtSpot"
+                android:paddingBottom="10dp"
+                android:layout_below="@+id/viewPagerSpot"
+                android:gravity="center"
+                android:text="Recent Friends Activity"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/txtSpot"
+                android:layout_width="wrap_content"
+                android:textColor="@color/colorPrimaryText"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/txtTour"
+                android:layout_below="@+id/viewPagerTours"
+                android:gravity="center"
+                android:text="Featured Spots"
+                android:textSize="18sp"
+                android:paddingBottom="10dp"
+                />
+
+            <TextView
+                android:textColor="@color/colorPrimaryText"
+                android:id="@+id/txtTour"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="35dp"
+                android:gravity="center"
+                android:paddingBottom="10dp"
+                android:text="Best Tours in town"
+                android:textSize="18sp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true" />
+
+            <TextView
+                android:text="See all >"
+                android:textSize="14sp"
+                android:textColor="@color/colorSecondaryText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnSpotSeeAll"
+                android:layout_alignBaseline="@+id/txtSpot"
+                android:layout_alignBottom="@+id/txtSpot"
+                android:layout_alignStart="@+id/btnTourSeeAll" />
+
+            <TextView
+                android:text="See all >"
+                android:textSize="14sp"
+                android:textColor="@color/colorSecondaryText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnTourSeeAll"
+                android:layout_marginEnd="42dp"
+                android:layout_alignBaseline="@+id/txtTour"
+                android:layout_alignBottom="@+id/txtTour"
+                android:layout_alignParentEnd="true" />
+
+            <TextView
+                android:text="See all >"
+                android:textSize="14sp"
+                android:textColor="@color/colorSecondaryText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnDealsSeeAll"
+                android:layout_below="@+id/viewPagerSpot"
+                android:layout_alignStart="@+id/btnSpotSeeAll" />
+
+            <TextView
+                android:text="See all >"
+                android:textSize="14sp"
+                android:textColor="@color/colorSecondaryText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnRecommendedSeeAll"
+                android:layout_below="@+id/viewPagerDeals"
+                android:layout_alignStart="@+id/btnDealsSeeAll" />
+        </RelativeLayout>
+    </ScrollView>
+</FrameLayout>

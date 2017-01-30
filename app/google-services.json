@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "884593973427",
+    "firebase_url": "https://tourista-2baf9.firebaseio.com",
+    "project_id": "tourista-2baf9",
+    "storage_bucket": "tourista-2baf9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:884593973427:android:6b825daf795e2318",
+        "android_client_info": {
+          "package_name": "com.touristadev.tourista"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "884593973427-6cpt9f3vq9i69ie5cd2kqahmvt4r5lvs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.touristadev.tourista",
+            "certificate_hash": "99B1E4AE6F6A83CB75C9CADC285A2B66EA1808AF"
+          }
+        },
+        {
+          "client_id": "884593973427-dosc690mq0gtpr8hp1tuu9dg5qq0p5ml.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCj_I-FwRf7uRU31TswORzervCFOKhZ6yA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "884593973427-dosc690mq0gtpr8hp1tuu9dg5qq0p5ml.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

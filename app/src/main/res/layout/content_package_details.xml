@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_package_details"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.touristadev.tourista.activities.PackageDetailsActivity"
+    tools:showIn="@layout/activity_package_details">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="215dp"
+            app:srcCompat="@mipmap/ic_launcher"
+            android:id="@+id/imgPackage"
+            android:layout_alignParentEnd="true" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:background="@drawable/background_border"
+            android:layout_below="@+id/txtTGTitle"
+            android:id="@+id/TGrelLay"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="15dp">
+        </RelativeLayout>
+
+        <TextView
+            android:text="TextView"
+            android:id="@+id/txtTGTitle"
+            android:layout_marginTop="15dp"
+            android:textSize="25sp"
+            app:layout_anchor="@+id/include"
+            android:layout_width="250dp"
+            android:layout_height="70dp"
+            android:textStyle="bold"
+            android:layout_below="@+id/imgPackage"
+            android:layout_alignParentStart="true"
+            android:layout_alignEnd="@+id/btnBook" />
+        <TextView
+            android:text="TextView"
+            android:layout_width="180dp"
+            android:layout_height="25dp"
+            android:id="@+id/txtNumberSpot"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="5dp"
+            android:layout_below="@+id/TGrelLay"
+            android:layout_alignParentStart="true" />
+        <TextView
+            android:text="TextView"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtNumberHours"
+            android:layout_alignEnd="@+id/rtTGBar"
+            android:layout_toEndOf="@+id/txtNumberSpot"
+            android:layout_alignBottom="@+id/txtNumberSpot"
+            android:layout_alignTop="@+id/txtNumberSpot" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:background="@drawable/background_border"
+            android:layout_below="@+id/txtNumberHours"
+            android:id="@+id/TGrelLay2"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="15dp">
+        </RelativeLayout>
+        <TextView
+            android:layout_marginTop="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="Package Itinerary"
+            android:layout_marginLeft="15dp"
+            android:textSize="20sp"
+            android:layout_below="@+id/TGrelLay2"
+            android:id="@+id/TGActivityTitle"/>
+        <ListView
+            android:divider="@null"
+            android:dividerHeight="0dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/PackageItineraryListView"
+            android:layout_marginTop="5dp"
+            android:layout_below="@+id/TGActivityTitle"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:background="@drawable/background_border"
+            android:layout_below="@+id/PackageItineraryListView"
+            android:id="@+id/TGrelLay4"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="15dp"
+            />
+        <TextView
+
+            android:layout_marginTop="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_marginLeft="15dp"
+            android:text="Package Description"
+            android:textSize="20sp"
+            android:layout_below="@+id/TGrelLay4"
+            android:id="@+id/txtPackDescription"/>
+
+        <Button
+            android:text="Book Now!"
+            android:layout_marginTop="15dp"
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnBook"
+            android:layout_below="@+id/btnCancellationPollicy"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true" />
+
+        <RatingBar
+            android:layout_height="wrap_content"
+            android:id="@+id/rtTGBar"
+            android:isIndicator="true"
+            style="@style/Widget.AppCompat.RatingBar.Small"
+            android:layout_width="wrap_content"
+            android:layout_marginBottom="11dp"
+            android:layout_above="@+id/TGrelLay"
+            android:layout_toEndOf="@+id/txtTGTitle" />
+
+        <TextView
+            android:text="TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtPackPrice"
+            android:layout_alignBaseline="@+id/txtTGTitle"
+            android:layout_alignBottom="@+id/txtTGTitle"
+            android:layout_alignParentEnd="true"
+            android:layout_toEndOf="@+id/txtTGTitle" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:background="@drawable/background_border"
+            android:layout_below="@+id/txtPackDescription"
+            android:id="@+id/TGrelLay5"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="15dp"
+            />
+        <Button
+            android:text="Cancellation Policy"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnCancellationPollicy"
+            android:layout_marginTop="17dp"
+            android:layout_below="@+id/TGrelLay5"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:text="TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txtPackDescription"
+            android:layout_alignEnd="@+id/txtPackDescription"
+            android:id="@+id/txtPackDesc" />
+    </RelativeLayout>
+</ScrollView>

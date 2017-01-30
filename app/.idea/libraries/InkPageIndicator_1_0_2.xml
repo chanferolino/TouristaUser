@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="InkPageIndicator-1.0.2">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/build/intermediates/exploded-aar/com.github.Commit451/InkPageIndicator/1.0.2/jars/classes.jar!/" />
+      <root url="file://$PROJECT_DIR$/build/intermediates/exploded-aar/com.github.Commit451/InkPageIndicator/1.0.2/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.Commit451/InkPageIndicator/1.0.2/4920819c26f6fb35d20f2e1594f4c5e2b956ca82/InkPageIndicator-1.0.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
