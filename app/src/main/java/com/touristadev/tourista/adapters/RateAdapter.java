@@ -47,7 +47,6 @@ public class RateAdapter extends RecyclerView.Adapter<RateAdapter.MyViewHolder>{
         private TextView TGName;
         private RatingBar rtKnowledge,rtPersonality,rtProfessional,rtPackage;
         private TextView txtKnowledge,txtPersonality,txtProfessional;
-        private Controllers con = new Controllers();
         private float knowledge,personality,professional;
         private int flag=0;
         public MyViewHolder(View v) {
@@ -90,12 +89,13 @@ public class RateAdapter extends RecyclerView.Adapter<RateAdapter.MyViewHolder>{
             rtPackage.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
                 @Override
                 public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
-                    con.addRatingPackage(ratingBar.getRating());
+                    Controllers.addRatingPackage(ratingBar.getRating());
 
                 }
             });
             if(flag==3){
-                con.addRatingTG(new RatingTG(knowledge,personality,professional));
+                float rate = (knowledge+personality+professional)/2;
+                Controllers.addRatingTG(rate);
             }
         }
 

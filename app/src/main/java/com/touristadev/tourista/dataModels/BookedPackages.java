@@ -19,11 +19,12 @@ public class BookedPackages {
     private String packDescription;
     private String packPrice;
     private String date;
+    private String CompanyName;
 
     public BookedPackages() {
     }
 
-    public BookedPackages(String packageId, String packageName, ArrayList<Itinerary> packageItinerary, String packageTourGuideClassification, int rating, int packageNoOfSpots, int packageTotalNoOfHours, int packageImage, ArrayList<Spots> spotItinerary, String packDescription, String packPrice, String date) {
+    public BookedPackages(String packageId, String packageName, ArrayList<Itinerary> packageItinerary, String packageTourGuideClassification, int rating, int packageNoOfSpots, int packageTotalNoOfHours, int packageImage, ArrayList<Spots> spotItinerary, String packDescription, String packPrice, String date, String companyName) {
         this.packageId = packageId;
         this.packageName = packageName;
         this.packageItinerary = packageItinerary;
@@ -36,6 +37,7 @@ public class BookedPackages {
         this.packDescription = packDescription;
         this.packPrice = packPrice;
         this.date = date;
+        CompanyName = companyName;
     }
 
     public String getPackageId() {
@@ -132,5 +134,13 @@ public class BookedPackages {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public String getCompanyName() {
+        return CompanyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        CompanyName = companyName;
     }
 }

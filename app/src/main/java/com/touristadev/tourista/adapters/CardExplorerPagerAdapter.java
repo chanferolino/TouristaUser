@@ -42,7 +42,6 @@ public class CardExplorerPagerAdapter extends RecyclerView.Adapter<CardExplorerP
     private static List<ExploreCard> mDataAda;
     private static Controllers mControllerAda = new Controllers();
     private List<Bitmap> mImages;
-    private static Controllers control= new Controllers();
     private Context context;
     public static int pos;
     private static String wish = "wew";
@@ -82,6 +81,7 @@ public class CardExplorerPagerAdapter extends RecyclerView.Adapter<CardExplorerP
         public TextView txtPrice;
         public TextView txtSpots;
         public TextView txtHours;
+        public TextView txtCompName;
         public RatingBar rtBar;
         public ImageView imageV;
         public CardView cardView;
@@ -96,6 +96,7 @@ public class CardExplorerPagerAdapter extends RecyclerView.Adapter<CardExplorerP
             txtHours = (TextView) view.findViewById(R.id.NoHours);
             rtBar = (RatingBar) view.findViewById(R.id.rtTGBar);
             imageV = (ImageView) view.findViewById(R.id.imgCard);
+            txtCompName = (TextView) view.findViewById(R.id.txtCompanyName);
             cardView.setOnClickListener(this);
         }
 
@@ -162,6 +163,7 @@ public class CardExplorerPagerAdapter extends RecyclerView.Adapter<CardExplorerP
        holder.txtPrice.setText(mDataAda.get(position).getPrice());
        holder.txtSpots.setText(mDataAda.get(position).getNoSpots());
         holder.txtHours.setText(mDataAda.get(position).getNoHours());
+        holder.txtCompName.setText(mDataAda.get(position).getCompanyName());
         holder.rtBar.setRating((Float.parseFloat(String.valueOf(mDataAda.get(position).getRating()))));
         holder.rtBar.setFocusable(false);
 
@@ -177,7 +179,7 @@ public class CardExplorerPagerAdapter extends RecyclerView.Adapter<CardExplorerP
     }
     public static void afterClick(final View v){
 
-        pos = control.getPosition();
+        pos = Controllers.getPosition();
         if (wish.equals("Wishlist")) {
             AlertDialog alertDialog = new AlertDialog.Builder(v.getContext()).create();
 
@@ -185,6 +187,8 @@ public class CardExplorerPagerAdapter extends RecyclerView.Adapter<CardExplorerP
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             Intent i = new Intent(v.getContext(), PackageDetailsActivity.class);
+
+                            i.putExtra("fragtype", "wish");
                             i.putExtra("position", pos);
                             i.putExtra("type", mDataAda.get(pos).getType());
                             i.putExtra("title", mDataAda.get(pos).getTitle());
@@ -216,6 +220,7 @@ public class CardExplorerPagerAdapter extends RecyclerView.Adapter<CardExplorerP
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             Intent i = new Intent(v.getContext(), BookDetailsActivity.class);
+                            i.putExtra("fragtype", "book");
                             i.putExtra("position", pos);
                             i.putExtra("type", mDataAda.get(pos).getType());
                             i.putExtra("title", mDataAda.get(pos).getTitle());
@@ -231,6 +236,8 @@ public class CardExplorerPagerAdapter extends RecyclerView.Adapter<CardExplorerP
                     v.getContext().startActivity(i);
                 } else {
                     Intent i = new Intent(v.getContext(), PackageDetailsActivity.class);
+
+                    i.putExtra("fragtype", "else");
                     i.putExtra("position", pos);
                     i.putExtra("type", mDataAda.get(pos).getType());
                     i.putExtra("title", mDataAda.get(pos).getTitle());

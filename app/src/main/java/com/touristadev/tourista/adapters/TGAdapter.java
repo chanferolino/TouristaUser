@@ -30,12 +30,11 @@ public class TGAdapter extends RecyclerView.Adapter<TGAdapter.MyViewHolder>{
 
     private String Packname;
     private Context context;
-    private Controllers con = new Controllers();
-    public  TGAdapter(ArrayList<TourGuideModel> Data,String PackName) {
+    public  TGAdapter(ArrayList<TourGuideModel> Data,String PackName22) {
 
         mData = new ArrayList<>();
         mViews = new ArrayList<>();
-        Packname = PackName;
+        Packname = PackName22;
         if(Data!=null){
             for (int i = 0; i < Data.size(); i++) {
                 mData.add(Data.get(i));
@@ -83,11 +82,16 @@ public class TGAdapter extends RecyclerView.Adapter<TGAdapter.MyViewHolder>{
                 .inflate(R.layout.card_item_tourguide, parent, false);
         context = view.getContext();
 
-        packlist = con.getControllerPackaaes();
+        packlist = Controllers.getControllerPackaaes();
+        Log.d("TGAdapter","Packname "+Packname);
         for(int x = 0 ; x<packlist.size();x++){
+
+            Log.d("TGAdapter","PacknameList "+packlist.get(x).getPackageName());
             if(packlist.get(x).getPackageName().equals(Packname)){
-                for(int y= 0 ; y<packlist.get(x).getSpotItinerary().size();y++) {
-                    spotList.add(packlist.get(x).getSpotItinerary().get(y).getSpotName());
+
+                Log.d("TGAdapter","PacknameList "+packlist.get(x).getPackageItinerary().size());
+                for(int y= 0 ; y<packlist.get(x).getPackageItinerary().size();y++) {
+                    spotList.add(packlist.get(x).getPackageItinerary().get(y).getSpotName());
                     Log.d("Chan12/28/16D", spotList.get(y) + "");
                 }
             }
@@ -102,6 +106,7 @@ public class TGAdapter extends RecyclerView.Adapter<TGAdapter.MyViewHolder>{
     public void onBindViewHolder(TGAdapter.MyViewHolder holder, int position) {
         holder.imgTG.setImageResource(mData.get(position).getTgImage());
         holder.SpotName.setText(spotList.get(position));
+        holder.SpotName.setVisibility(View.GONE);
         holder.TGName.setText(mData.get(position).getTgName());
         holder.TGAge.setText("Age"+mData.get(position).getTgAge());
         holder.TGMotto.setText("Personal Description\n"+mData.get(position).getTgMotto());

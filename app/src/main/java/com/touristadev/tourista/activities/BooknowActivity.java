@@ -38,6 +38,7 @@ import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventAttendee;
 import com.google.api.services.calendar.model.EventDateTime;
 import com.google.api.services.calendar.model.EventReminder;
+import com.google.common.io.BaseEncoding;
 import com.jaredrummler.materialspinner.MaterialSpinner;
 import com.touristadev.tourista.R;
 import com.touristadev.tourista.controllers.Controllers;
@@ -55,6 +56,8 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -101,8 +104,7 @@ public class BooknowActivity extends AppCompatActivity  implements EasyPermissio
         mFinalCredential = GoogleAccountCredential.usingOAuth2(
                 getApplicationContext(), Arrays.asList("https://www.googleapis.com/auth/calendar"))
                 .setBackOff(new ExponentialBackOff());
-//
-
+Log.d("LoginAct",mFinalCredential+"");
 
 
         btnCheck = (Button) findViewById(R.id.btnCheckout);
@@ -181,6 +183,7 @@ public class BooknowActivity extends AppCompatActivity  implements EasyPermissio
         eventDate = String.valueOf(edtDate.getText());
     }
     private void addEvent() {
+        Log.d("Booknow!",mFinalCredential.getSelectedAccountName()+"");
         if (! isGooglePlayServicesAvailable()) {
             acquireGooglePlayServices();
         } else if (mFinalCredential.getSelectedAccountName() == null) {
@@ -190,7 +193,7 @@ public class BooknowActivity extends AppCompatActivity  implements EasyPermissio
         } else {
             Calendar c = Calendar.getInstance();
             System.out.println("Current time => " + c.getTime());
-            Controllers con = new Controllers();
+
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault());
             String formattedDate = df.format(c.getTime());
             Log.d("BookNowAct","1");
@@ -198,12 +201,12 @@ public class BooknowActivity extends AppCompatActivity  implements EasyPermissio
 
             Log.d("BookNowAct","Spin "+spinValue);
             try {
-                obj.put("userId",con.getCurrentUserID());
+                obj.put("userId",Controllers.getCurrentUserID());
                 obj.put("packageId",pack.getPackageId());
                 obj.put("reserveDate",formattedDate);
                 obj.put("tourDate",edtDate.getText());
                 obj.put("numOfPeople",spinValue+"");
-                obj.put("status","Request");
+                obj.put("status","request");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -368,13 +371,9 @@ private boolean isDeviceOnline() {
                 List<String> eventStrings = new ArrayList<String>();
 
 
-                Log.d("BookNowAct","2");
-                Log.d("BookNowAct",""+pack.getSpotItinerary().size());
-
                 Event event = new Event()
-                        .setId(CurrentUser.userFirebaseId+""+edtDate.getText())
                         .setSummary(packageTitle)
-                        .setLocation(pack.getSpotItinerary().get(0).getSpotAddress())
+                        .setLocation("Cebu City")
                         .setDescription("The day of the tour: "+packageTitle);
 
                 Log.d("BookNowAct","2a");
@@ -394,6 +393,7 @@ private boolean isDeviceOnline() {
                         new EventAttendee().setEmail(CurrentUser.email)
 
                 };
+                Log.d("BookNowAct","2b "+CurrentUser.email);
                 event.setAttendees(Arrays.asList(attendees));
 
                 EventReminder[] reminderOverrides = new EventReminder[]{
@@ -407,7 +407,11 @@ private boolean isDeviceOnline() {
 
                 String calendarId = "primary";
                 try {
+
+                    Log.d("BookNowAct","Event "+event );
                     event = mService.events().insert(calendarId, event).execute();
+
+                    Log.d("BookNowAct","Event "+event );
                 } catch (IOException e) {
                     e.printStackTrace();
 
@@ -436,6 +440,7 @@ private boolean isDeviceOnline() {
                 Intent i = new Intent(BooknowActivity.this, PaypalActivity.class);
             i.putExtra("position", position);
             i.putExtra("type", typePackage);
+            i.putExtra("pax", spinValue);
             i.putExtra("title", packageTitle);
             startActivity(i);
             }
@@ -464,8 +469,8 @@ private boolean isDeviceOnline() {
 
         @Override
         protected JSONObject doInBackground(JSONObject... params) {
-            Controllers con = new Controllers();
-            con.postToDb("/api/book-package",params[0]);
+
+            Controllers.postToDb("api/book-package",params[0]);
             return null;
         }
 

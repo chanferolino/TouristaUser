@@ -79,10 +79,9 @@ public class CustomPackageFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_custom_package, container, false);
-        Controllers con = new Controllers();
         CustomListTemp.clear();
         CustomList.clear();
-        CustomListTemp = con.getCustomizedPackageList();
+        CustomListTemp = Controllers.getCustomizedPackageList();
 
         Log.d("CustomPackageFragment","Size "+CustomListTemp.size());
         if (CustomListTemp != null) {

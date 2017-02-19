@@ -35,9 +35,7 @@ public class CustomPackageAdapter extends RecyclerView.Adapter<CustomPackageAdap
 
     private List<CardView> mViews;
     private static List<CustomizedPackage> mDataAda;
-    private static Controllers mControllerAda = new Controllers();
     private List<Bitmap> mImages;
-    private static Controllers control= new Controllers();
     private Context context;
 
     public static int pos;
@@ -172,7 +170,7 @@ public class CustomPackageAdapter extends RecyclerView.Adapter<CustomPackageAdap
             alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Cancel",
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            mControllerAda.removeWishPackage(pos);
+                            Controllers.removeWishPackage(pos);
                             Intent i = new Intent(v.getContext(), TourActivity.class);
                             v.getContext().startActivity(i);
                         }

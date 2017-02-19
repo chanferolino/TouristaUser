@@ -34,7 +34,6 @@ import java.util.ArrayList;
 public class TourGuideDetailsFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     private static final String ARG_PARAM1 = "param1";
-    private Controllers con = new Controllers();
     // TODO: Rename and change types of parameters
     private OnFragmentInteractionListener mListener;
 
@@ -65,9 +64,9 @@ public class TourGuideDetailsFragment extends Fragment {
         if (getArguments() != null) {
             packagenameTG = getArguments().getString("ARG_PARAM1");
 
-            tourGuideList = con.getTourguideList();
+            tourGuideList = Controllers.getTourguideList();
 
-            con.setCurrTourGuide(tourGuideList);
+            Controllers.setCurrTourGuide(tourGuideList);
         }
     }
 
@@ -86,6 +85,8 @@ public class TourGuideDetailsFragment extends Fragment {
         mRecyclerView.setHasFixedSize(true);
 
         Log.d("packTG","TGsize: "+tourGuideList.size());
+
+        Log.d("packTG","TGsize: "+packagenameTG);
         mCardAdapter = new TGAdapter(tourGuideList,packagenameTG);
         mRecyclerView.setAdapter(mCardAdapter);
         mCardAdapter.notifyDataSetChanged();

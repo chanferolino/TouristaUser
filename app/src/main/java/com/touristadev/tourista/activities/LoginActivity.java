@@ -149,10 +149,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 editor.putString(PREF_ACCOUNT_NAME, accountName);
                 editor.apply();
                 mFinalCredential.setSelectedAccountName(accountName);
-                Controllers con = new Controllers();
-                con.setCredentials(mFinalCredential);
+                Controllers.setCredentials(mFinalCredential);
+                CurrentUser.email = mFinalCredential.getSelectedAccountName();
             }
-
+            Log.d("LoginAct",mFinalCredential+"");
 
         }
         mCallbackManager.onActivityResult(requestCode, resultCode, data);
@@ -172,15 +172,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         if (!task.isSuccessful()) {
                             //do nothing
                         } else {
-                            Controllers con = new Controllers();
                             Intent intent = new Intent(LoginActivity.this, ExploreActivity.class);
-                            CurrentUser.email = user.getEmail();
+
                             CurrentUser.name = user.getDisplayName();
                             CurrentUser.photoUrl = user.getPhotoUrl().toString();
                             CurrentUser.userFacebookId = accsTok.getUserId();
                             CurrentUser.userFirebaseId = user.getUid();
 
-                            con.setCurrentUserID(user.getUid());
+                            Controllers.setCurrentUserID(user.getUid());
                             startActivity(intent);
                         }
                     }

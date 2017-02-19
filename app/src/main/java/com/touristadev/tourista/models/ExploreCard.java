@@ -12,8 +12,9 @@ public class ExploreCard {
     private String NoHours; //Date
     private String type;
     private int imgView;
+    private String CompanyName;
 
-    public ExploreCard(String title, int rating, String price, String noSpots, String noHours, String type, int imgView) {
+    public ExploreCard(String title, int rating, String price, String noSpots, String noHours, String type, int imgView, String companyName) {
         Title = title;
         Rating = rating;
         Price = price;
@@ -21,6 +22,7 @@ public class ExploreCard {
         NoHours = noHours;
         this.type = type;
         this.imgView = imgView;
+        CompanyName = companyName;
     }
 
     public String getTitle() {
@@ -77,5 +79,13 @@ public class ExploreCard {
 
     public void setImgView(int imgView) {
         this.imgView = imgView;
+    }
+
+    public String getCompanyName() {
+        return CompanyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        CompanyName = companyName;
     }
 }

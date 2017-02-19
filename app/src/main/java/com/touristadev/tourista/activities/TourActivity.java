@@ -44,7 +44,6 @@ public class TourActivity extends AppCompatActivity {
     public ForYouFragment t= new ForYouFragment();
     public  FragmentManager fragmentManager;
     private String firstName,lastName, email;
-
     private Typeface myCustomFont;
 
     @Override
@@ -117,6 +116,7 @@ public class TourActivity extends AppCompatActivity {
 
             }
         });
+      
     }
     @Override
     public boolean onCreateOptionsMenu (Menu menu){
@@ -125,6 +125,12 @@ public class TourActivity extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+
+    }
     public void switchPages(int index) {
         fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();

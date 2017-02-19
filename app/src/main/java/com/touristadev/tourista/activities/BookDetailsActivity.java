@@ -1,6 +1,7 @@
 package com.touristadev.tourista.activities;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -18,6 +19,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RatingBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -54,6 +57,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 public class BookDetailsActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
@@ -64,16 +68,19 @@ public class BookDetailsActivity extends FragmentActivity implements OnMapReadyC
     private String typePackage,packageTitle;
     private ArrayList<BookedPackages> packList = new ArrayList<>();
     private BookedPackages packageBook = new BookedPackages();
-    private Controllers con = new Controllers();
     private ArrayList<LatLng> points = new ArrayList<>();
     private  PolylineOptions lineOptions =new PolylineOptions();
     private  PolylineOptions finalOptions =new PolylineOptions();
     private int r=0;
     private               ArrayList <LatLng> booked = new ArrayList<LatLng>();
     private Button btnEnd,btnViewTour,btnAddComment;
+    private ArrayList<Integer> intRate = new ArrayList<>();
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     Marker mCurrLocationMarker;
+    private Button btnView;
+    private TextView txt_Description,txtTile;
+    private RatingBar ratBarM;
     LocationRequest mLocationRequest;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,13 +97,16 @@ public class BookDetailsActivity extends FragmentActivity implements OnMapReadyC
         typePackage = i.getStringExtra("type");
         packageTitle = i.getStringExtra("title");
 
-        packList = con.getBookedList();
+        packList = Controllers.getBookedList();
         for(int x = 0 ; x<packList.size();x++){
 
+            Log.d("BookDetailsChan",packList.get(x).getPackageName()+" PacklistTitle");
+
+            Log.d("BookDetailsChan",packageTitle+" PackTitle");
             if(packList.get(x).getPackageName().equals(packageTitle)){
                 packageBook = packList.get(x);
-
-                con.setCurrentPackage(packageBook);
+                Log.d("BookDetailsChan",packageBook.getPackageName()+" PackTitle");
+                Controllers.setCurrentPackage(packageBook);
             }
         }
         btnEnd.setOnClickListener(new View.OnClickListener() {
@@ -107,14 +117,15 @@ public class BookDetailsActivity extends FragmentActivity implements OnMapReadyC
                     if(packList.get(x).getPackageName().equals(packageTitle)){
                         packageBook = packList.get(x);
 
-                        con.setCurrentPackage(packageBook);
+                        Controllers.setCurrentPackage(packageBook);
                     }
                 }
                 Intent i = new Intent(BookDetailsActivity.this,RateTourGuideActivity.class);
                 i.putExtra("position", position);
                 i.putExtra("type", typePackage);
                 i.putExtra("title", packageTitle);
-                    startActivity(i);
+                i.putExtra("fragtype","wish");
+                startActivity(i);
 
             }
         });
@@ -125,6 +136,7 @@ public class BookDetailsActivity extends FragmentActivity implements OnMapReadyC
                 i.putExtra("position", position);
                 i.putExtra("type", typePackage);
                 i.putExtra("title", packageTitle);
+                i.putExtra("fragtype","wish");
                 startActivity(i);
             }
         });
@@ -154,7 +166,7 @@ public class BookDetailsActivity extends FragmentActivity implements OnMapReadyC
                 if(packList.get(x).getPackageName().equals(packageTitle)){
                     packageBook = packList.get(x);
 
-                    con.setCurrentPackage(packageBook);
+                    Controllers.setCurrentPackage(packageBook);
                 }
             }
             Fragment fragment;
@@ -190,71 +202,102 @@ public class BookDetailsActivity extends FragmentActivity implements OnMapReadyC
 
 
 
-                MarkerOptions options = new MarkerOptions();
+        MarkerOptions options = new MarkerOptions();
+
+
+        Log.d("BookDetailsChan",packageBook.getSpotItinerary().size()+" Size");
+        for(int x = 0 ; x<packageBook.getSpotItinerary().size();x++){
+            mMap.addMarker(options.position(new LatLng(Double.parseDouble(packageBook.getSpotItinerary().get(x).getSpotLocationLong()),Double.parseDouble(packageBook.getSpotItinerary().get(x).getSpotLocationLat())))
+            .title(packageBook.getSpotItinerary().get(x).getSpotName())
+                    .snippet("\t\t"+packageBook.getSpotItinerary().get(x).getSpotRating()+"\t\tRatings \t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t \n"+packageBook.getSpotItinerary().get(x).getSpotAddress()+"\n"+"Description: "+"\n"+packageBook.getSpotItinerary().get(x).getSpotDescription()));
+            intRate.add(packageBook.getSpotItinerary().get(x).getSpotRating());
+            booked.add(new LatLng(Double.parseDouble(packageBook.getSpotItinerary().get(x).getSpotLocationLong()),Double.parseDouble(packageBook.getSpotItinerary().get(x).getSpotLocationLat())));
+            options.icon(getMarkerIcon("#fecd23"));
+
+        }
+
+
+        LatLng origin = null;
+        LatLng dest = null;
+        int flag=1;
+        for(int z = 0 ; z <booked.size();z++) {
+            int wew=0;
+            origin = booked.get(z);
+            wew=z+1;
+            if(wew!=booked.size()) {
+
+                dest = booked.get(wew);
+            }
+            else{
+                flag=0;
+            }
+            if(flag==1) {
+                String url = getUrl(origin, dest);
+                FetchUrl FetchUrl = new FetchUrl();
+                FetchUrl.execute(url);
+
+
+            }
+            r = z;
+        }
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(booked.get(0),10));
+        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
 
 
 
-              for(int x = 0 ; x<packageBook.getSpotItinerary().size();x++){
-                  mMap.addMarker(options.position(new LatLng(Double.parseDouble(packageBook.getSpotItinerary().get(x).getSpotLocationLong()),Double.parseDouble(packageBook.getSpotItinerary().get(x).getSpotLocationLat()))));
-                    booked.add(new LatLng(Double.parseDouble(packageBook.getSpotItinerary().get(x).getSpotLocationLong()),Double.parseDouble(packageBook.getSpotItinerary().get(x).getSpotLocationLat())));
-                  options.icon(getMarkerIcon("#fecd23"));
+            @Override
+            public View getInfoWindow(Marker arg0) {
 
-                }
+                return null;
+            }
 
+            @Override
+            public View getInfoContents(Marker marker) {
+                View v = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.custom_marker_layout, null);
 
-            LatLng origin = null;
-            LatLng dest = null;
-            int flag=1;
-                    for(int z = 0 ; z <booked.size();z++) {
-                        int wew=0;
-                         origin = booked.get(z);
-                        wew=z+1;
-                        if(wew!=booked.size()) {
+                txtTile = (TextView) v.findViewById(R.id.txtTourPackageName);
+                txt_Description = (TextView) v.findViewById(R.id.txtDe) ;
+                ratBarM = (RatingBar) v.findViewById(R.id.rtBarA);
+                ratBarM.setVisibility(View.GONE);
 
-                            dest = booked.get(wew);
-                        }
-                        else{
-                          flag=0;
-                        }
-                        if(flag==1) {
-                            String url = getUrl(origin, dest);
-                            FetchUrl FetchUrl = new FetchUrl();
-                            FetchUrl.execute(url);
+                btnView = (Button) v.findViewById(R.id.btnView);
+                btnView.setVisibility(View.GONE);
 
+                txtTile.setText(marker.getTitle());
+                txt_Description.setText(marker.getSnippet());
 
-                        }
-                        r = z;
-                    }
-
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(booked.get(0),10));
+                return v;
+            }
+        });
 
     }
     public BitmapDescriptor getMarkerIcon(String color) {
         float[] hsv = new float[3];
         Color.colorToHSV(Color.parseColor(color), hsv);
         return BitmapDescriptorFactory.defaultMarker(hsv[0]);}
-private class FetchUrl extends AsyncTask<String, Void, String> {
+    private class FetchUrl extends AsyncTask<String, Void, String> {
 
-    @Override
-    protected String doInBackground(String... url) {
-        String data = "";
+        @Override
+        protected String doInBackground(String... url) {
+            String data = "";
 
-        try {
-            data = downloadUrl(url[0]);
-        } catch (Exception e) {
+            try {
+                data = downloadUrl(url[0]);
+            } catch (Exception e) {
+            }
+            return data;
         }
-        return data;
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+
+            ParserTask parserTask = new ParserTask();
+            parserTask.execute(result);
+
+        }
     }
-
-    @Override
-    protected void onPostExecute(String result) {
-        super.onPostExecute(result);
-
-        ParserTask parserTask = new ParserTask();
-        parserTask.execute(result);
-
-    }
-}
     private String getUrl(LatLng origin, LatLng dest) {
         String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
         String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
@@ -339,7 +382,7 @@ private class FetchUrl extends AsyncTask<String, Void, String> {
             }
 
             if(lineOptions != null) {
-                    finalOptions.addAll(lineOptions.getPoints());
+                finalOptions.addAll(lineOptions.getPoints());
                 mMap.addPolyline(lineOptions);
 
 
@@ -387,7 +430,7 @@ private class FetchUrl extends AsyncTask<String, Void, String> {
             mCurrLocationMarker.remove();
         }
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        con.setCurrentLocation(latLng);
+        Controllers.setCurrentLocation(latLng);
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
         markerOptions.title("Current Position");

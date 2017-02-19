@@ -32,7 +32,6 @@ public class PassportFragment extends Fragment {
     private CircleImageView imageView;
     private FirebaseUser user;
     private static AppCompatActivity ac;
-    private Controllers mControllers = new Controllers();
     public static PassportFragment newInstance(AppCompatActivity cone) {
         ac = cone;
         return new PassportFragment();
@@ -40,7 +39,7 @@ public class PassportFragment extends Fragment {
 
     @Override
     public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
-        user = mControllers.getUser();
+        user = Controllers.getUser();
 
 
         final int tabCount = 1;

@@ -23,6 +23,8 @@ import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -56,6 +58,7 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.DateTime;
+import com.google.api.client.util.ExponentialBackOff;
 import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventAttendee;
@@ -63,6 +66,7 @@ import com.google.api.services.calendar.model.EventDateTime;
 import com.google.api.services.calendar.model.EventReminder;
 import com.jaredrummler.materialspinner.MaterialSpinner;
 import com.touristadev.tourista.R;
+import com.touristadev.tourista.SingleShotLocationProvider;
 import com.touristadev.tourista.controllers.Controllers;
 import com.touristadev.tourista.dataModels.CustomizedPackage;
 import com.touristadev.tourista.dataModels.Itinerary;
@@ -87,29 +91,30 @@ import java.util.Objects;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class CustomPackageActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks,  LocationListener {
+public class CustomPackageActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks, LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     static final int REQUEST_ACCOUNT_PICKER = 1000;
     static final int REQUEST_AUTHORIZATION = 1001;
     static final int REQUEST_GOOGLE_PLAY_SERVICES = 1002;
     static final int REQUEST_PERMISSION_GET_ACCOUNTS = 1003;
     static final int RESULT_LOAD_IMAGE = 1;
-
+    private static final boolean TODO = true;
+    private Location currLocation = new Location("");
+    Location mLastLocation;
     GoogleAccountCredential mFinalCredential;
     private TouristaPackages pack = new TouristaPackages();
     private static final String PREF_ACCOUNT_NAME = "accountName";
-    private static final String[] SCOPES = { CalendarScopes.CALENDAR };
-    private EditText edtDate,edtDescription;
-    private TextView txtPackName,txtDays,txtPrice;
-    private MaterialSpinner spinLang,spinNumTG,spinPax;
+    private static final String[] SCOPES = {CalendarScopes.CALENDAR};
+    private EditText edtDate, edtDescription;
+    private TextView txtPackName, txtDays, txtPrice;
+    private MaterialSpinner spinLang, spinNumTG, spinPax;
     private ListView itineraryList;
     private Button btnBook;
-    private String spinTGnum,spinLanguage,spinPaxnum;
+    private String spinTGnum, spinLanguage, spinPaxnum;
     private Calendar myCalendar;
     private String type;
     private String eventDate;
     private ImageView imgV;
     private String pos;
-    private Controllers con = new Controllers();
     private ArrayList<CustomizedPackage> customList = new ArrayList<>();
     private CustomizedPackage customData = new CustomizedPackage();
     private LocationManager mLocationManager;
@@ -124,13 +129,16 @@ public class CustomPackageActivity extends AppCompatActivity implements EasyPerm
 
 
     private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_custom_package);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
-
+        mFinalCredential = GoogleAccountCredential.usingOAuth2(
+                getApplicationContext(), Arrays.asList("https://www.googleapis.com/auth/calendar"))
+                .setBackOff(new ExponentialBackOff());
+        Log.d("LoginAct", mFinalCredential + "");
         edtDate = (EditText) findViewById(R.id.edtCustomDate);
         edtDescription = (EditText) findViewById(R.id.customDesc);
         txtPackName = (TextView) findViewById(R.id.txtCustomPackName);
@@ -145,16 +153,18 @@ public class CustomPackageActivity extends AppCompatActivity implements EasyPerm
         txtPrice.setFocusable(true);
         txtPrice.setEnabled(true);
         txtPrice.setClickable(true);
-
-        mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(1000);
-        mLocationRequest.setFastestInterval(1000);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest,  this);
+        mProgress = new ProgressDialog(this);
+        if (mGoogleApiClient == null) {
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
         }
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.connect();
+        }
+
         spinLang = (MaterialSpinner) findViewById(R.id.spinCustomLang);
         spinNumTG = (MaterialSpinner) findViewById(R.id.spnCustomTourGuides);
         spinPax = (MaterialSpinner) findViewById(R.id.spinPax);
@@ -162,7 +172,8 @@ public class CustomPackageActivity extends AppCompatActivity implements EasyPerm
 
         spinNumTG.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
 
-            @Override public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
+            @Override
+            public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
                 spinTGnum = item;
             }
         });
@@ -170,25 +181,86 @@ public class CustomPackageActivity extends AppCompatActivity implements EasyPerm
 
         spinPax.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
 
-            @Override public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
+            @Override
+            public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
                 spinPaxnum = item;
+                Log.d("CustomPackActChan", spinPaxnum + "");
             }
         });
 
         spinLang.setItems("English", "Cebuano", "Tagalog", "Japanese", "Chinese", "Korean", "Bicolano", "Waray");
         spinLang.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
 
-            @Override public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
+            @Override
+            public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
                 spinLanguage = item;
             }
         });
         itineraryList = (ListView) findViewById(R.id.CustomPackageItineraryListView);
         btnBook = (Button) findViewById(R.id.btnBook);
+        btnBook.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Calendar c = Calendar.getInstance();
+                System.out.println("Current time => " + c.getTime());
+
+                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                String formattedDate = df.format(c.getTime());
+                ArrayList<Spots> spotiti = new ArrayList<>();
+                int packSize = 0;
+                if (type.equals("details")) {
+                    packSize = Integer.parseInt(String.valueOf(customData.getPackageItinerary().size()));
+                    customData = customList.get(Integer.parseInt(pos));
+                    ArrayList<Spots> temp = new ArrayList<>();
+                    customList = Controllers.getCustomizedPackageList();
+                    temp = Controllers.getControllerSpots();
+                    for (int x = 0; x < customData.getPackageItinerary().size(); x++) {
+                        for (int z = 0; z < temp.size(); z++) {
+                            if (customData.getPackageItinerary().get(x).getSpotID().equals(temp.get(z).getSpotName())) {
+                                spotiti.add(temp.get(z));
+                            }
+                        }
+                    }
+                }
+                int y = spinPax.getSelectedIndex();
+                List<Object> spin = new ArrayList<>();
+                spin = spinPax.getItems();
+                spinPaxnum = String.valueOf(spin.get(y));
+                Log.d("CustomPackActChan", spinPaxnum + "");
+                spinPaxnum = String.valueOf(Integer.parseInt(spinPaxnum));
+
+                try {
+
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("to", "/topics/news");
+                    JSONObject data = new JSONObject();
+                    data.put("nameOfTourist", CurrentUser.name);
+                    data.put("numberOfPerson", spinPaxnum);
+                    data.put("packageId", "01");
+                    data.put("reserveDate", edtDate.getText().toString());
+                    data.put("paymentforTG", customData.getPrice());
+                    data.put("notifType", "Request");
+                    jsonObject.put("data", data);
+                    JSONObject notification = new JSONObject();
+                    notification.put("title", "Incoming Request..");
+                    notification.put("body", customData.getPackageName());
+                    jsonObject.put("notification", notification);
+                    new CustomPackageActivity.RequestTask().execute(jsonObject);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+                addEvent();
+
+            }
+        });
         imgV = (ImageView) findViewById(R.id.imageView3);
         imgV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(i, RESULT_LOAD_IMAGE);
             }
         });
@@ -213,8 +285,8 @@ public class CustomPackageActivity extends AppCompatActivity implements EasyPerm
         txtPrice.setClickable(false);
         txtPrice.setFocusableInTouchMode(false);
 
-        Log.d("CustomPackageChannix","Type: "+type);
-        if(type.equals("create")){
+        Log.d("CustomPackageChannix", "Type: " + type);
+        if (type.equals("create")) {
             pos = "0";
 
             btnBook.setVisibility(View.GONE);
@@ -238,13 +310,13 @@ public class CustomPackageActivity extends AppCompatActivity implements EasyPerm
             txtPrice.setClickable(true);
             txtPrice.setFocusableInTouchMode(true);
         }
-        if(type.equals("details")){
+        if (type.equals("details")) {
             pos = i.getStringExtra("pos");
-            Log.d("CustomPackagechan",pos+"");
-            Log.d("CustomPackagechan",i.getStringExtra("pos"));
-            customList = con.getCustomizedPackageList();
+            Log.d("CustomPackagechan", pos + "");
+            Log.d("CustomPackagechan", i.getStringExtra("pos"));
+            customList = Controllers.getCustomizedPackageList();
             customData = customList.get(Integer.parseInt(pos));
-            Log.d("CustomPackagechan",Integer.parseInt(pos)+"");
+            Log.d("CustomPackagechan", Integer.parseInt(pos) + "");
 
 
             edtDate.setText(customData.getStartDate());
@@ -256,22 +328,22 @@ public class CustomPackageActivity extends AppCompatActivity implements EasyPerm
             int spinlangIndex = 0;
             int spinNumTGindex = 0;
             int spinNumPaxindex = 0;
-            for(int x = 0 ; x<spinLang.getItems().size();x++){
-                if(spinLang.getItems().get(x).equals(customData.getPackLanguage())){
+            for (int x = 0; x < spinLang.getItems().size(); x++) {
+                if (spinLang.getItems().get(x).equals(customData.getPackLanguage())) {
                     spinlangIndex = x;
                 }
             }
             spinLang.setSelectedIndex(spinlangIndex);
             spinLang.setEnabled(false);
-            for(int x = 0 ; x<spinNumTG.getItems().size();x++){
-                if(spinNumTG.getItems().get(x).equals(customData.getPackNumTourGuide())){
+            for (int x = 0; x < spinNumTG.getItems().size(); x++) {
+                if (spinNumTG.getItems().get(x).equals(customData.getPackNumTourGuide())) {
                     spinNumTGindex = x;
                 }
             }
             spinNumTG.setSelectedIndex(spinNumTGindex);
             spinNumTG.setEnabled(false);
-            for(int x = 0 ; x<spinPax.getItems().size();x++){
-                if(spinPax.getItems().get(x).equals(customData.getPackNumTourGuide())){
+            for (int x = 0; x < spinPax.getItems().size(); x++) {
+                if (spinPax.getItems().get(x).equals(customData.getPackNumTourGuide())) {
                     spinNumPaxindex = x;
                 }
             }
@@ -280,7 +352,7 @@ public class CustomPackageActivity extends AppCompatActivity implements EasyPerm
             String spot_name;
 
             for (int x = 0; x < customData.getPackageItinerary().size(); x++) {
-                packItinerary.add(customData.getPackageItinerary().get(x).getStartTime()+"\t\t\t\t "+customData.getPackageItinerary().get(x).getEndTime()+"\t\t\t\t "+customData.getPackageItinerary().get(x).getSpotID()+"\t\t\t\t");
+                packItinerary.add(customData.getPackageItinerary().get(x).getStartTime() + "\t\t\t\t " + customData.getPackageItinerary().get(x).getEndTime() + "\t\t\t\t " + customData.getPackageItinerary().get(x).getSpotID() + "\t\t\t\t");
 
             }
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
@@ -315,15 +387,7 @@ public class CustomPackageActivity extends AppCompatActivity implements EasyPerm
             }
 
         }
-        btnBook.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-                view.setBackgroundColor(Color.GREEN);
-                addEvent();
-
-            }
-        });
         myCalendar = Calendar.getInstance();
         final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
 
@@ -351,7 +415,21 @@ public class CustomPackageActivity extends AppCompatActivity implements EasyPerm
         });
 
 
+    }
 
+    public class RequestTask extends AsyncTask<JSONObject, Void, Void> {
+        @Override
+        protected Void doInBackground(JSONObject... jsonObjects) {
+            HttpUtils.POST("https://fcm.googleapis.com/fcm/send", jsonObjects[0]);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            Intent i = new Intent(CustomPackageActivity.this, TourActivity.class);
+            startActivity(i);
+        }
     }
 
     private void updateLabel() {
@@ -360,94 +438,190 @@ public class CustomPackageActivity extends AppCompatActivity implements EasyPerm
         edtDate.setText(sdf.format(myCalendar.getTime()));
         eventDate = String.valueOf(edtDate.getText());
     }
+
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.option_menu, menu); //your file name
         return super.onCreateOptionsMenu(menu);
     }
+
     public boolean onOptionsItemSelected(final MenuItem item) {
-    Controllers con = new Controllers();
         ArrayList<CustomizedPackage> custList = new ArrayList<>();
-        custList = con.getCustomizedPackageList();
+        custList = Controllers.getCustomizedPackageList();
         switch (item.getItemId()) {
             case R.id.save:
-                if(!Objects.equals(type, "create")){
-                    con.removeCustomizedPackage(Integer.parseInt(pos));
-                   ArrayList<Itinerary> temp = new ArrayList<>();
-                    temp = con.getCustomizedPackageList().get(Integer.parseInt(pos)).getPackageItinerary();
+                if (type.equals("create")) {
+                    ArrayList<Itinerary> tempo = new ArrayList<>();
+                    CustomizedPackage cust = new CustomizedPackage(txtPackName.getText().toString(), spinLanguage, spinTGnum, spinPaxnum, "0", tempo, Integer.parseInt(txtDays.getText().toString()), R.mipmap.ic_tourista, edtDescription.getText().toString(), edtDate.getText().toString());
+                    Controllers.addCustomizedPackage(cust);
 
-                    int hours = Integer.parseInt(txtDays.getText().toString()) * 8;
+                    Intent i = new Intent(CustomPackageActivity.this, TourActivity.class);
+                    startActivity(i);
+                } else {
+
+                    Log.d("CustomPackageChan", "Sud!Create1 :");
+                    ArrayList<Itinerary> temp = new ArrayList<>();
+                    temp = Controllers.getCustomizedPackageList().get(Integer.parseInt(pos)).getPackageItinerary();
+
                     ArrayList<Spots> spotListemp = new ArrayList<>();
-                    spotListemp = con.getControllerSpots();
+                    spotListemp = Controllers.getControllerSpots();
+
+                    Log.d("CustomPackageChan", spotListemp.size() + " ");
                     double distance = 0;
 
-                    String spotIdStart, spotIdEnd;
+                    String spotIdStart = null, spotIdEnd;
 
                     LatLng startp = null;
                     LatLng endp = null;
                     double distanceprice, finalPrice;
-                    for (int z = 1; z < temp.size(); z++) {
-                        int x = z + 1;
-                        spotIdStart = temp.get(z).getSpotID();
-                        spotIdEnd = temp.get(x).getSpotID();
 
+                    double hours = Double.parseDouble((txtDays.getText().toString())) * 8.00;
+                    float distanceInMeters = 0;
+                    int x = 0;
+                    for (int z = 0; z < temp.size(); z++) {
+
+                        Location loc1 = new Location("");
+                        Location loc2 = new Location("");
+                        x += 1;
+                        loc1 = currLocation;
+                        if (spotIdStart == null) {
+                            spotIdStart = temp.get(z).getSpotID();
+                        }
+                        if (temp.size() == 1) {
+                            spotIdEnd = temp.get(z).getSpotID();
+                        } else {
+                            if (x == temp.size()) {
+                                spotIdEnd = temp.get(z).getSpotID();
+
+                            } else {
+                                spotIdEnd = temp.get(x).getSpotID();
+                            }
+                        }
+                        Log.d("CustomPackageChan", spotIdStart + "start ");
+                        Log.d("CustomPackageChan", spotIdEnd + "start ");
 
                         if (z == 0) {
-                            startp = con.getCurrentLocation();
-                            if(startp.equals(null)){
-                                startp = curlocation;
+                            LocationManager locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+                            boolean network_enabled = locManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+                            Location location;
+
+                            if (network_enabled) {
+
+                                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                                    // TODO: Consider calling
+                                    //    ActivityCompat#requestPermissions
+                                    // here to request the missing permissions, and then overriding
+                                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                    //                                          int[] grantResults)
+                                    // to handle the case where the user grants the permission. See the documentation
+                                    // for ActivityCompat#requestPermissions for more details.
+                                    return TODO;
+                                }
+                                location = locManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+                                if(location!=null){
+                                    loc1.setLongitude(location.getLongitude());
+                                    loc1.setLatitude(location.getLatitude());
+                                }
                             }
-                            endp = new LatLng(Double.parseDouble(spotListemp.get(0).getSpotLocationLat()),Double.parseDouble(spotListemp.get(0).getSpotLocationLong()));
+                            Log.d("CustomPackageActChan", currLocation + " startPLong");
+//
+                            Log.d("CustomPackageActChan", loc1 + " wew1");
+
+                            loc2.setLongitude(Double.parseDouble(spotListemp.get(0).getSpotLocationLat()));
+                            loc2.setLatitude(Double.parseDouble(spotListemp.get(0).getSpotLocationLong()));
+                            distanceInMeters += loc1.distanceTo(loc2);
+
+                            Log.d("CustomPackageActChan", loc2 + " wew2");
+                            Log.d("CustomPackageActChan", distanceInMeters + " distance for");
                         } else {
                             startp = null;
                             endp = null;
-                            for(int q = 0; q < spotListemp.size();q++) {
-                                if (spotListemp.get(q).getSpotID().equals(spotIdStart)) {
+                            int flag1=0;
+                            int flag2=0;
+                            int y = spinPax.getSelectedIndex();
+                            List<Object> spin = new ArrayList<>();
+                            spin = spinPax.getItems();
+                            spinPaxnum = String.valueOf(spin.get(y));
+                            Log.d("CustomPackActChan", spinPaxnum + "");
+                            spinPaxnum = String.valueOf(Integer.parseInt(spinPaxnum));
 
-                                    startp = new LatLng(Double.parseDouble(spotListemp.get(q).getSpotLocationLat()), Double.parseDouble(spotListemp.get(q).getSpotLocationLong()));
+                            List<Object> spin2 = new ArrayList<>();
+                            spin2 = spinLang.getItems();
+                            spinLanguage = String.valueOf(spin2.get(y));
+                            Log.d("CustomPackActChan", spinLanguage + "");
 
+                            List<Object> spin3 = new ArrayList<>();
+                            spin3 = spinNumTG.getItems();
+                            spinTGnum = String.valueOf(spin3.get(y));
+                            Log.d("CustomPackActChan", spinTGnum + "");
+
+
+
+
+                            for (int q = 0; q < spotListemp.size(); q++) {
+
+                                Log.d("CustomPackageChan", q + "");
+                                Log.d("CustomPackageChan", spotListemp.get(q).getSpotName() + "");
+
+                                if (spotListemp.get(q).getSpotName().equals(spotIdStart)) {
+
+                                    Log.d("CustomPackageChan", spotIdStart + "");
+                                   loc1.setLongitude(Double.parseDouble(spotListemp.get(q).getSpotLocationLat()));
+                                    loc1.setLatitude(Double.parseDouble(spotListemp.get(q).getSpotLocationLong()));
                                 }
-                                if (spotListemp.get(q).getSpotID().equals(spotIdEnd)) {
+                                if (spotListemp.get(q).getSpotName().equals(spotIdEnd)) {
 
-                                    endp = new LatLng(Double.parseDouble(spotListemp.get(q).getSpotLocationLat()), Double.parseDouble(spotListemp.get(q).getSpotLocationLong()));
-
-                                }
+                                    Log.d("CustomPackageChan", spotIdEnd + "");
+                                    loc2.setLongitude(Double.parseDouble(spotListemp.get(q).getSpotLocationLat()));
+                                    loc2.setLatitude(Double.parseDouble(spotListemp.get(q).getSpotLocationLong()));
+                                };
                             }
 
+                            distanceInMeters += loc1.distanceTo(loc2);
+                            Log.d("CustomPackageActChan", distanceInMeters + " distance for");
+
+                            Log.d("CustomPackageChan", "Sud!Create 2:");
 
                         }
-                        if (startp != null && endp != null) {
-                            distance = con.CalculationByDistance(startp, endp);
 
-                            Log.d("CustomPackage", "Distance :" + distance);
-                        } else {
-                            Log.d("CustomPackage", "Distance is null");
-                        }
+
+                        Log.d("CustomPackageChan", loc1 + " loc1");
+                        Log.d("CustomPackageChan", loc2 + " loc2");
+
+
 
 
                     }
-                    distanceprice = distance * 50;
-                    finalPrice = (hours * distanceprice) * Double.parseDouble(spinPaxnum);
 
-                    Log.d("CustomPackage", "Distance price :" + distanceprice);
-                    Log.d("CustomPackage", "Final price :" + finalPrice);
-                    CustomizedPackage cust = new CustomizedPackage(txtPackName.getText().toString(), spinLanguage, spinTGnum, spinPaxnum, String.valueOf(finalPrice), temp, Integer.parseInt(txtDays.getText().toString()), R.mipmap.ic_tourista, edtDescription.getText().toString(), eventDate);
-                    con.addCustomizedPackage(cust);
+
+
+                    Log.d("CustomPackageChan", "Distance :" + distanceInMeters);
+                    distanceInMeters = distanceInMeters/1000;
+                    distanceprice = distanceInMeters * 16;
+                    Log.d("CustomPackageChan", "Distance :" + distanceInMeters);
+
+                    finalPrice = ((hours * 450) * Float.parseFloat(spinPaxnum))+distanceprice;
+                    ArrayList<CustomizedPackage> custL = new ArrayList<>();
+                    custL = Controllers.getCustomizedPackageList();
+                    Log.d("CustomPackageChan", "Final price :" + finalPrice);
+//                    finalPrice = finalPrice + Float.parseFloat(custL.get(Integer.parseInt(pos)).getPrice());
+                    Log.d("CustomPackageChan", "Distance price :" + distanceprice);
+                    Log.d("CustomPackageChan", "SpinPaxnum price :" + Double.parseDouble(spinPaxnum));
+                    Log.d("CustomPackageChan", "Hours price :" + hours);
+                    String s = String.format(Locale.US, "%.2f", finalPrice);
+                    Log.d("CustomPackageChan", "Final price :" + s);
+
+                    Controllers.removeCustomizedPackage(Integer.parseInt(pos));
+                    CustomizedPackage cust = new CustomizedPackage(txtPackName.getText().toString(), spinLanguage, spinTGnum, spinPaxnum, s, temp, Integer.parseInt(txtDays.getText().toString()), R.mipmap.ic_tourista, edtDescription.getText().toString(), edtDate.getText().toString());
+                    Controllers.addCustomizedPackage(cust);
 
 
                     Intent i = new Intent(CustomPackageActivity.this, TourActivity.class);
                     startActivity(i);
-
-                }
-                else {
-
-                    ArrayList<Itinerary> tempo = new ArrayList<>();
-                    CustomizedPackage cust = new CustomizedPackage(txtPackName.getText().toString(), spinLanguage, spinTGnum, spinPaxnum, "0", tempo, Integer.parseInt(txtDays.getText().toString()), R.mipmap.ic_tourista, edtDescription.getText().toString(), eventDate);
-                    con.addCustomizedPackage(cust);
-                    Intent i = new Intent(CustomPackageActivity.this, TourActivity.class);
-                    startActivity(i);
-                }
-                return true;
+                }                return true;
             case R.id.edit:
                 btnBook.setVisibility(View.VISIBLE);
                 edtDate.setFocusable(true);
@@ -478,7 +652,7 @@ public class CustomPackageActivity extends AppCompatActivity implements EasyPerm
                 return true;
             case R.id.delete:
                 if(custList.get(Integer.parseInt(pos))!=null){
-                    con.removeCustomizedPackage(Integer.parseInt(pos));
+                    Controllers.removeCustomizedPackage(Integer.parseInt(pos));
                 }
                 return true;
             default:
@@ -493,22 +667,18 @@ public class CustomPackageActivity extends AppCompatActivity implements EasyPerm
         } else if (! isDeviceOnline()) {
             edtDate.setText("No network connection available.");
         } else {
-            if(customData.getPackageItinerary().size()!=0) {
+            if(customData.getPackageItinerary()==null) {
                 Calendar c = Calendar.getInstance();
                 System.out.println("Current time => " + c.getTime());
-                Controllers con = new Controllers();
 
                 SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
                 String formattedDate = df.format(c.getTime());
 
                 JSONObject obj = new JSONObject();
                 try {
-                    obj.put("userId", con.getCurrentUserID());
-                    obj.put("packageId", "customized");
-                    obj.put("reserveDate", formattedDate);
-                    obj.put("tourDate", edtDate.getText());
-                    obj.put("numOfPeople", spinPaxnum);
-                    obj.put("status", "Request");
+                    obj.put("userId",Controllers.getCurrentUserID());
+                    obj.put("packageName", txtPackName.getText().toString());
+                    obj.put("numOfTGNeeded", spinTGnum);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -664,8 +834,41 @@ public class CustomPackageActivity extends AppCompatActivity implements EasyPerm
     }
 
     @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
+        if (mLastLocation != null) {
+            Controllers.setCurrentLocation(new LatLng(mLastLocation.getLatitude(),mLastLocation.getLongitude()));
+            curlocation = new LatLng(mLastLocation.getLatitude(),mLastLocation.getLongitude());
+        }
+    }
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    @Override
     public void onLocationChanged(Location location) {
-        con.setCurrentLocation(new LatLng(location.getLatitude(),location.getLongitude()));
+        Controllers.setCurrentLocation(new LatLng(location.getLatitude(),location.getLongitude()));
         curlocation = new LatLng(location.getLatitude(),location.getLongitude());
     }
 
@@ -706,7 +909,6 @@ public class CustomPackageActivity extends AppCompatActivity implements EasyPerm
 
                     .setId(CurrentUser.userFirebaseId+""+edtDate.getText())
                     .setSummary(txtPackName.getText().toString())
-                    .setLocation(pack.getSpotItinerary().get(0).getSpotAddress())
                     .setDescription("The day of the tour: "+txtPackName.getText().toString());
             DateTime startDateTime = new DateTime(eventDate+"T"+pack.getPackageItinerary().get(0).getStartTime()+":00-"+pack.getPackageItinerary().get(0).getEndTime());
             EventDateTime start = new EventDateTime()
@@ -757,8 +959,8 @@ public class CustomPackageActivity extends AppCompatActivity implements EasyPerm
             if (output == null || output.size() == 0) {
             } else {
                 output.add(0, "Data retrieved using the Google Calendar API:");
-                Intent i = new Intent(CustomPackageActivity.this, TourActivity.class);
 
+                Intent i = new Intent(CustomPackageActivity.this, TourActivity.class);
                 startActivity(i);
             }
         }
@@ -787,8 +989,8 @@ public class CustomPackageActivity extends AppCompatActivity implements EasyPerm
 
         @Override
         protected String doInBackground(JSONObject... params) {
-            Controllers con = new Controllers();
-            con.postToDb("/api/book-package",params[0]);
+
+            Controllers.postToDb("api/create-custom-package",params[0]);
             return null;
         }
 

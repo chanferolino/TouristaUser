@@ -31,6 +31,13 @@ import com.google.firebase.messaging.RemoteMessage;
 import com.touristadev.tourista.R;
 import com.touristadev.tourista.activities.PassportActivity;
 import com.touristadev.tourista.activities.TourActivity;
+import com.touristadev.tourista.controllers.Controllers;
+import com.touristadev.tourista.dataModels.BookedPackages;
+import com.touristadev.tourista.dataModels.FBNotif;
+import com.touristadev.tourista.dataModels.TouristaPackages;
+import com.touristadev.tourista.models.CurrentUser;
+
+import java.util.ArrayList;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
@@ -50,15 +57,18 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
+            // Check if message contains a notification payload.
+            String notifType = remoteMessage.getData().get("notifType");
+            String userId = remoteMessage.getData().get("userId");
+            Log.d(TAG, "Message data payload: " + remoteMessage.getData());
+            Log.d(TAG, "From: " + remoteMessage.getNotification().getTitle());
+            Log.d(TAG, "From: " + remoteMessage.getNotification().getBody());
+            if (notifType.equals("Booked") && userId.equals(CurrentUser.userFirebaseId)) {
+                sendNotification(remoteMessage.getNotification().getTitle(), remoteMessage.getNotification().getBody());
+
+            }
         }
 
-        // Check if message contains a notification payload.
-        if (remoteMessage.getNotification() != null) {
-            String packagename = remoteMessage.getData().get("message");
-
-            sendNotification(remoteMessage.getNotification().getTitle(), remoteMessage.getNotification().getBody(), packagename);
-//            }
-        }
 
     }
 
@@ -67,10 +77,15 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      *
      * @param messageBody FCM message body received.
      */
-    public void sendNotification(String title, String messageBody, String packagename) {
+    public void sendNotification(String title, String messageBody) {
 
-        Intent intent2 = new Intent(getApplicationContext(), PassportActivity.class);
-        intent2.putExtra("PackageName", packagename);
+        Log.d(TAG, "From: " + title);
+        Log.d(TAG, "From: " + messageBody);
+        Intent intent2 = new Intent(getApplicationContext(), TourActivity.class);
+
+
+
+
         // your application to the Home screen.
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         // Adds the back stack for the Intent (but not the Intent itself)

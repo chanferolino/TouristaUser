@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -144,11 +145,13 @@ public class ForYouFragment extends Fragment {
 
 
         initFragments();
-        Controllers con = new Controllers();
-        SpotListTemp = con.getControllerSpots();
+        SpotListTemp.clear();
+        TourListTemp.clear();
+        DealListTemp.clear();
+        SpotListTemp = Controllers.getControllerSpots();
         if(SpotListTemp.size()!=0){
-            TourListTemp = con.getControllerPackaaes();
-            DealListTemp = con.getControllerPackaaes();
+            TourListTemp = Controllers.getControllerPackaaes();
+            DealListTemp = Controllers.getControllerPackaaes();
         }
         btnTourSA.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -175,9 +178,10 @@ public class ForYouFragment extends Fragment {
 
             }
         });
+        TourList.clear();
         if (TourListTemp != null) {
             for (int x = 0; x < TourListTemp.size(); x++) {
-                TourList.add(new ExploreCard(TourListTemp.get(x).getPackageName(), TourListTemp.get(x).getRating(), "₱ " + String.valueOf(TourListTemp.get(x).getPackPrice()), String.valueOf(TourListTemp.get(x).getPackageNoOfSpots()) + " Spots", String.valueOf(TourListTemp.get(x).getPackageTotalNoOfHours()) + " Hours", "tour",TourListTemp.get(x).getPackageImage()));
+                TourList.add(new ExploreCard(TourListTemp.get(x).getPackageName(), TourListTemp.get(x).getRating(), "₱ " + String.valueOf(TourListTemp.get(x).getPackPrice()), String.valueOf(TourListTemp.get(x).getPackageNoOfSpots()) + " Spots", String.valueOf(TourListTemp.get(x).getPackageTotalNoOfHours()) + " Hours", "tour",TourListTemp.get(x).getPackageImage(),TourListTemp.get(x).getCompanyName()));
 
             }
         }
@@ -194,9 +198,10 @@ public class ForYouFragment extends Fragment {
 
         mViewPagerTours.setOffscreenPageLimit(3);
 //------------------------------------------------------------------------------------------------
+        SpotList.clear();
         if (SpotListTemp != null) {
             for (int x = 0; x < SpotListTemp.size(); x++) {
-                SpotList.add(new ExploreCard(SpotListTemp.get(x).getSpotName(), SpotListTemp.get(x).getSpotRating(), " ", " ", " ", "spot",SpotListTemp.get(x).getSpotImage()));
+                SpotList.add(new ExploreCard(SpotListTemp.get(x).getSpotName(), SpotListTemp.get(x).getSpotRating(), " ", " ", " ", "spot",SpotListTemp.get(x).getSpotImage(),""));
 
             }
         }
@@ -211,10 +216,14 @@ public class ForYouFragment extends Fragment {
         mViewPagerSpots.setAdapter(mCardAdapter);
         mViewPagerSpots.setOffscreenPageLimit(3);
 //------------------------------------------------------------------------------------------------
-        recentActivityList = con.getRecentList();
+        recentActivityList.clear();
+        DealList.clear();
+        recentActivityList = Controllers.getRecentList();
+
+        Log.d("changwapo","Recent "+recentActivityList.size());
         if (recentActivityList != null) {
             for (int x = 0; x < recentActivityList.size(); x++) {
-                DealList.add(new ExploreCard(recentActivityList.get(x).getPackageName(), recentActivityList.get(x).getRating(), "₱ " + String.valueOf(recentActivityList.get(x).getPackPrice()), String.valueOf(recentActivityList.get(x).getPackageNoOfSpots()) + " Spots", String.valueOf(recentActivityList.get(x).getPackageTotalNoOfHours()) + " Hours", "tour",recentActivityList.get(x).getPackageImage()));
+                DealList.add(new ExploreCard(recentActivityList.get(x).getPackageName(), recentActivityList.get(x).getRating(), "₱ " + String.valueOf(recentActivityList.get(x).getPackPrice()), String.valueOf(recentActivityList.get(x).getPackageNoOfSpots()) + " Spots", String.valueOf(recentActivityList.get(x).getPackageTotalNoOfHours()) + " Hours", "tour",recentActivityList.get(x).getPackageImage(),recentActivityList.get(x).getCompanyName()));
 
             }
         }

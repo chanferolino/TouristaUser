@@ -39,7 +39,6 @@ import java.io.IOException;
 
 public class QRCodeActivity extends AppCompatActivity {
     private ImageView imgQRcode;
-    private Controllers con = new Controllers();
     private Button btnDecode;
     private String user = null;
     private String refCode;

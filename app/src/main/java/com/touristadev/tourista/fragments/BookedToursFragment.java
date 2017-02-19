@@ -22,6 +22,7 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.Events;
+import com.google.common.io.BaseEncoding;
 import com.touristadev.tourista.R;
 import com.touristadev.tourista.activities.ShadowTransformer;
 import com.touristadev.tourista.adapters.CardExplorerPagerAdapter;
@@ -99,16 +100,15 @@ public class BookedToursFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_bookedtours, container, false);
-        Controllers con = new Controllers();
         BookedListTemp.clear();
         BookedList.clear();
-        BookedListTemp = con.getBookedList();
-        mFinalCredential = con.getCredentials();
+        BookedListTemp = Controllers.getBookedList();
+        mFinalCredential = Controllers.getCredentials();
         MakeRequestTask mak = new MakeRequestTask(mFinalCredential);
         mak.execute();
         if (BookedListTemp != null) {
             for (int x = 0; x < BookedListTemp.size(); x++) {
-                BookedList.add(new ExploreCard(BookedListTemp.get(x).getPackageName(), BookedListTemp.get(x).getRating(), "₱ " + String.valueOf(BookedListTemp.get(x).getPackageTotalNoOfHours()*40), String.valueOf(BookedListTemp.get(x).getPackageNoOfSpots()) + " Spots", "Start Date: "+String.valueOf(BookedListTemp.get(x).getPackageTotalNoOfHours()) , "tour",BookedListTemp.get(x).getPackageImage()));
+                BookedList.add(new ExploreCard(BookedListTemp.get(x).getPackageName(), BookedListTemp.get(x).getRating(), "₱ " + String.valueOf(BookedListTemp.get(x).getPackageTotalNoOfHours()*40), String.valueOf(BookedListTemp.get(x).getPackageNoOfSpots()) + " Spots", "Start Date: "+String.valueOf(BookedListTemp.get(x).getPackageTotalNoOfHours()) , "tour",BookedListTemp.get(x).getPackageImage(),BookedListTemp.get(x).getCompanyName()));
 
             }
         }
@@ -202,6 +202,7 @@ public class BookedToursFragment extends Fragment {
             for(int x = 0 ; x < eventStrings.size();x++) {
                 for(int z = 0 ; z < BookedListTemp.size();z++) {
                     String id = CurrentUser.userFirebaseId+""+BookedListTemp.get(z).getDate();
+
                     if (!Objects.equals(eventStrings.get(x), id)){
                         mService.events().delete("primary", ""+eventStrings.get(x)).execute();
                     }

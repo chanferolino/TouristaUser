@@ -36,7 +36,6 @@ public class TourGuideAdapter extends PagerAdapter implements CardAdapter {
     private String Packname;
     LayoutInflater mInflater;
     private Context context;
-    private Controllers con = new Controllers();
     public  TourGuideAdapter(ArrayList<TourGuideModel> Data,String PackName) {
 
         mData = new ArrayList<>();
@@ -86,7 +85,7 @@ public class TourGuideAdapter extends PagerAdapter implements CardAdapter {
     public Object instantiateItem(ViewGroup container, final int position) {
         View view = LayoutInflater.from(container.getContext())
                 .inflate(R.layout.card_item_tourguide, container, false);
-        packlist = con.getControllerPackaaes();
+        packlist = Controllers.getControllerPackaaes();
         for(int x = 0 ; x<packlist.size();x++){
             if(packlist.get(x).getPackageName().equals(Packname)){
                spotList.add(packlist.get(x).getSpotItinerary().get(x).getSpotName());

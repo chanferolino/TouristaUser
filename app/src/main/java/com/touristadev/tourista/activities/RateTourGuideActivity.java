@@ -8,6 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -30,15 +32,14 @@ public class RateTourGuideActivity extends AppCompatActivity {
     private TouristaPackages currPack = new TouristaPackages();
 
     private ArrayList<TouristaPackages> PackageList = new ArrayList<>();
-    private Controllers con = new Controllers();
     private Controllers mControllers = new Controllers();
     private String typePackage,packageTitle;
+    private Button btnOkay;
     private int position;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rate_tour_guide);
-
         Intent i = getIntent();
         position = i.getIntExtra("position", 0);
         typePackage = i.getStringExtra("type");
@@ -49,6 +50,46 @@ public class RateTourGuideActivity extends AppCompatActivity {
                 currPack = PackageList.get(x);
             }
         }
+        btnOkay = (Button) findViewById(R.id.btnOkay);
+        btnOkay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+                    JSONObject obj = new JSONObject();
+                    JSONArray jarray = new JSONArray();
+                    ArrayList<RatingTG> ratgList = new ArrayList<>();
+                    float ratingTG= 0 ;
+                    ratingTG = Controllers.getRatingTG();
+//                    for(int x = 0 ; x < ratgList.size() ; x++){
+//                        JSONObject j = new JSONObject();
+//                        try {
+////                    j.put("guideId",) addguideID
+//                            j.put("acts_professionaly", ratgList.get(x).getPersonality());
+//                            j.put("isknowledgable",ratgList.get(x).getKnowledge());
+//                            j.put("rightpersonality",ratgList.get(x).getPersonality());
+//                        } catch (JSONException e) {
+//
+//                            Log.d("chanRegisterActivity",e+"");
+//                            e.printStackTrace();
+//                        }
+//                        jarray.put(j);
+//                    }
+                    try {
+                        obj.put("package", Controllers.getPackRate());
+                        obj.put("guide", ratingTG);
+                    } catch (JSONException e) {
+
+                        Log.d("RateTGactChan", e+"");
+                        e.printStackTrace();
+                    }
+                    RateTourGuideActivity.POSTrating pr = new RateTourGuideActivity.POSTrating();
+                    pr.execute(obj);
+
+
+            }
+        });
+
         if(savedInstanceState == null)
         {
             Fragment fragment;
@@ -60,50 +101,20 @@ public class RateTourGuideActivity extends AppCompatActivity {
             fr.add(R.id.fragment_container, fragment);
             fr.commit();
         }
-        if(con.getPackRate()!=0&&con.getRatingTG().size()!=0) {
 
-
-            JSONObject obj = new JSONObject();
-            JSONArray jarray = new JSONArray();
-            ArrayList<RatingTG> ratgList = new ArrayList<>();
-            ratgList = con.getRatingTG();
-            for(int x = 0 ; x < ratgList.size() ; x++){
-                JSONObject j = new JSONObject();
-                try {
-//                    j.put("guideId",) addguideID
-                    j.put("acts_professionaly", ratgList.get(x).getPersonality());
-                    j.put("isknowledgable",ratgList.get(x).getKnowledge());
-                    j.put("rightpersonality",ratgList.get(x).getPersonality());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    Log.d("chanRegisterActivity",e+"");
-                }
-                jarray.put(j);
-            }
-            try {
-                obj.put("packageId", "customized");
-                obj.put("rating", con.getPackRate());
-                obj.put("tourTransactionId", con.getCurrentTransactionID());
-                obj.put("guide", jarray);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            RateTourGuideActivity.POSTrating pr = new RateTourGuideActivity.POSTrating();
-            pr.execute(obj);
-        }
     }
     public class POSTrating extends AsyncTask<JSONObject, Void, String> {
 
         @Override
         protected String doInBackground(JSONObject... params) {
-            Controllers con = new Controllers();
-            con.postToDb("/api/add-rating-to-tour-guide-and-package",params[0]);
+            Controllers.postToDb("api/add-rating-to-tour-guide-and-package",params[0]);
             return null;
         }
 
         @Override
         protected void onPostExecute(String rt) {
-
+            Intent i = new Intent(RateTourGuideActivity.this,ExploreActivity.class);
+            startActivity(i);
             super.onPostExecute(rt);
         }
     }

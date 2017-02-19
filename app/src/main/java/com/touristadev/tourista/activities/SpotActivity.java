@@ -45,16 +45,16 @@ public class SpotActivity extends AppCompatActivity {
         btnBook = (Button) findViewById(R.id.btnBook);
         Intent i = getIntent();
         position = i.getIntExtra("position", 0);
+        pack.clear();
         pack = mControllers.getControllerSpots();
         spotDetails = pack.get(position);
         btnBook.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Controllers con = new Controllers();
                 ArrayList<String> mList = new ArrayList<String>();
                 ArrayList<CustomizedPackage> mCustomList = new ArrayList<CustomizedPackage>();
-                mCustomList = con.getCustomizedPackageList();
-                if(con.getCustomizedPackageList().size()<1){
+                mCustomList = Controllers.getCustomizedPackageList();
+                if(Controllers.getCustomizedPackageList().size()<1){
                     final AlertDialog alertDialog = new AlertDialog.Builder(SpotActivity.this).create();
 
                     alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Create new Package!",
@@ -62,6 +62,7 @@ public class SpotActivity extends AppCompatActivity {
                                 public void onClick(DialogInterface dialog, int which) {
                                     Intent i = new Intent(SpotActivity.this, CustomPackageActivity.class);
                                     i.putExtra("title","null");
+                                    i.putExtra("type","create");
                                     startActivity(i);
                                 }
                             });
@@ -94,10 +95,9 @@ public class SpotActivity extends AppCompatActivity {
                     builderSingle.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            Controllers con = new Controllers();
                             final int[] wew = {which};
                             final String strName = arrayAdapter.getItem(which);
-                            if (con.getCustomizedPackageList().size() < 3) {
+                            if (Controllers.getCustomizedPackageList().size() < 3) {
                                 AlertDialog.Builder builderInner = new AlertDialog.Builder(SpotActivity.this);
                                 builderInner.setMessage(strName);
                                 builderInner.setTitle("Added to " + strName);
@@ -105,8 +105,7 @@ public class SpotActivity extends AppCompatActivity {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         Log.d("SpotActivitychan", wew[0] +"");
-                                        Controllers con = new Controllers();
-                                        con.addSpotToPackage(spotDetails, wew[0]);
+                                        Controllers.addSpotToPackage(spotDetails, wew[0]);
                                         Intent i = new Intent(SpotActivity.this, CustomPackageActivity.class);
                                         i.putExtra("title",strName);
                                         i.putExtra("pos",wew[0]+"");

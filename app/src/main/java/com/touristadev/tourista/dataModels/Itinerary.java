@@ -9,14 +9,16 @@ public class Itinerary {
     private String  spotID;
     private String startTime;
     private String endTime;
+    private String  spotName;
 
     public Itinerary() {
     }
 
-    public Itinerary(String spotID, String startTime, String endTime) {
+    public Itinerary(String spotID, String startTime, String endTime, String spotName) {
         this.spotID = spotID;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.spotName = spotName;
     }
 
     public String getSpotID() {
@@ -41,5 +43,13 @@ public class Itinerary {
 
     public void setEndTime(String endTime) {
         this.endTime = endTime;
+    }
+
+    public String getSpotName() {
+        return spotName;
+    }
+
+    public void setSpotName(String spotName) {
+        this.spotName = spotName;
     }
 }

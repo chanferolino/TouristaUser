@@ -44,7 +44,6 @@ public class RateFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    private Controllers con = new Controllers();
     // TODO: Rename and change types of parameters
     private BookedPackages currPack = new BookedPackages();
 
@@ -76,8 +75,7 @@ public class RateFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             packagenameTG = getArguments().getString("ARG_PARAM1");
-            Controllers fincon = new Controllers();
-            PackageList = fincon.getControllerPackaaes();
+            PackageList = Controllers.getControllerPackaaes();
             for(int x = 0 ; x<PackageList.size();x++){
                 if(PackageList.get(x).getPackageName().equals(packagenameTG)){
                     cardList.add(new RatingCard(PackageList.get(x).getPackageName(),0,PackageList.get(x).getPackageImage()));
@@ -85,8 +83,8 @@ public class RateFragment extends Fragment {
 
                 }
             }
-            con.setCurrTourGuide(tourGuideList);
-            tourGuideList = con.getCurrentTourguideList();
+            Controllers.setCurrTourGuide(tourGuideList);
+            tourGuideList = Controllers.getCurrentTourguideList();
             for(int x = 0; x<tourGuideList.size();x++) {
 
                 cardList.add(new RatingCard(tourGuideList.get(x).getTgName(), 0, tourGuideList.get(x).getTgImage()));

@@ -10,17 +10,18 @@ public class TourGuideModel {
     private String tgMotto;
     private int tgStars;
     private String tgAge;
+    private String guideId;
 
-    public TourGuideModel(String tgName, int tgImage, String tgMotto, int tgStars, String tgAge) {
+    public TourGuideModel(String tgName, int tgImage, String tgMotto, int tgStars, String tgAge, String guideId) {
         this.tgName = tgName;
         this.tgImage = tgImage;
         this.tgMotto = tgMotto;
         this.tgStars = tgStars;
         this.tgAge = tgAge;
+        this.guideId = guideId;
     }
 
-    public TourGuideModel(TourGuideModel tourGuideModel) {
-    }
+
 
     public String getTgName() {
         return tgName;
@@ -60,5 +61,13 @@ public class TourGuideModel {
 
     public void setTgAge(String tgAge) {
         this.tgAge = tgAge;
+    }
+
+    public String getGuideId() {
+        return guideId;
+    }
+
+    public void setGuideId(String guideId) {
+        this.guideId = guideId;
     }
 }

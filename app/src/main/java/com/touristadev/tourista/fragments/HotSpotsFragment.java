@@ -87,15 +87,14 @@ public class HotSpotsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_hot_spots, container, false);
-        Controllers con = new Controllers();
         SpotListTemp.clear();
-        SpotListTemp = con.getControllerSpots();
+        SpotListTemp = Controllers.getControllerSpots();
         SpotList.clear();
 
 //        -----------------------------------------------------------------------------------------------
         if(SpotListTemp!=null){
             for(int x = 0 ; x < SpotListTemp.size() ; x++) {
-                SpotList.add(new ExploreCard(SpotListTemp.get(x).getSpotName(), SpotListTemp.get(x).getSpotRating(), " ", " ", " ", "spot",SpotListTemp.get(x).getSpotImage()));
+                SpotList.add(new ExploreCard(SpotListTemp.get(x).getSpotName(), SpotListTemp.get(x).getSpotRating(), " ", " ", " ", "spot",SpotListTemp.get(x).getSpotImage(),""));
 
             }
         }

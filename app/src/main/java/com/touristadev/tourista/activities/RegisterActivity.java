@@ -161,8 +161,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                                     firstName = object.getString("first_name");
                                     lastName = object.getString("last_name");
                                     email = object.getString("email");
-                                    Controllers con = new Controllers();
-                                    con.setCurrentUserID(object.getString("id"));
+                                    Controllers.setCurrentUserID(object.getString("id"));
                                     Toast.makeText(getApplicationContext(), "Welcome! " + firstName, Toast.LENGTH_SHORT).show();
                                 } catch (JSONException e) {
                                     Log.d("Chan", "Exception "+e);
@@ -253,13 +252,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
         @Override
         protected Void doInBackground(Void... voids) {
-            String currentUser = null;
-            Controllers con = new Controllers();
+            String currentUser = null;;
 
             JSONObject obj = new JSONObject();
             try {
                 obj.put("userId",user.getUid());
-                obj.put("facebookId",con.getCurrentUserID());
+                obj.put("facebookId",Controllers.getCurrentUserID());
                 obj.put("firstName",firstName);
                 obj.put("lastName",lastName);
                 obj.put("birthday","2016-02-11");
@@ -269,7 +267,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            con.postToDb("/api/create-user",obj);
+            Controllers.postToDb("api/create-user",obj);
             return null;
         }
 
@@ -283,8 +281,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
         @Override
         protected JSONArray doInBackground(JSONArray... params) {
-            Controllers con = new Controllers();
-            con.postToDb("/api/post-friends",params[0]);
+            Controllers.postToDb("api/post-friends",params[0]);
             return null;
         }
 

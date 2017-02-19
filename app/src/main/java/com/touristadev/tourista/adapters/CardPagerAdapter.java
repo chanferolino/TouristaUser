@@ -35,7 +35,7 @@ public class CardPagerAdapter extends PagerAdapter implements CardAdapter {
     private List<CardView> mViews;
     private List<ExploreCard> mData;
     private float mBaseElevation;
-    private TextView txtTitle,txtPrice,txtSpots,txtHours;
+    private TextView txtTitle,txtPrice,txtSpots,txtHours,txtCompName;
     private ImageView imgVi;
     private RatingBar rtBar;
     private int pos;
@@ -123,6 +123,7 @@ public class CardPagerAdapter extends PagerAdapter implements CardAdapter {
         txtHours = (TextView) view.findViewById(R.id.NoHours);
         rtBar = (RatingBar) view.findViewById(R.id.rtTGBar);
         imgVi = (ImageView) view.findViewById(R.id.imgCard);
+        txtCompName = (TextView) view.findViewById(R.id.txtCompName);
         pos = position;
 
         imgVi.setImageResource(mData.get(position).getImgView());
@@ -130,6 +131,7 @@ public class CardPagerAdapter extends PagerAdapter implements CardAdapter {
         txtPrice.setText(mData.get(position).getPrice());
         txtSpots.setText(mData.get(position).getNoSpots());
         txtHours.setText(mData.get(position).getNoHours());
+        txtCompName.setText(mData.get(position).getCompanyName());
         rtBar.setRating((Float.parseFloat(String.valueOf(mData.get(position).getRating()))));
         rtBar.setFocusable(false);
 
@@ -148,6 +150,8 @@ public class CardPagerAdapter extends PagerAdapter implements CardAdapter {
                         }
                         else{
                             Intent i = new Intent(context, PackageDetailsActivity.class);
+
+                            i.putExtra("fragtype", "non");
                             i.putExtra("position",position);
                             i.putExtra("type",mData.get(position).getType());
                             i.putExtra("title",mData.get(position).getTitle());

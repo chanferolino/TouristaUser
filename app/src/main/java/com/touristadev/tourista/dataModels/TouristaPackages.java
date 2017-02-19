@@ -18,10 +18,11 @@ public class TouristaPackages {
     private ArrayList<Spots > spotItinerary= new ArrayList<>();
     private String packDescription;
     private String packPrice;
+    private String CompanyName;
     public TouristaPackages() {
     }
 
-    public TouristaPackages(String packageId, String packageName, ArrayList<Itinerary> packageItinerary, String packageTourGuideClassification, int rating, int packageNoOfSpots, int packageTotalNoOfHours, int packageImage, ArrayList<Spots> spotItinerary, String packDescription, String packPrice) {
+    public TouristaPackages(String packageId, String packageName, ArrayList<Itinerary> packageItinerary, String packageTourGuideClassification, int rating, int packageNoOfSpots, int packageTotalNoOfHours, int packageImage, ArrayList<Spots> spotItinerary, String packDescription, String packPrice, String companyName) {
         this.packageId = packageId;
         this.packageName = packageName;
         this.packageItinerary = packageItinerary;
@@ -33,6 +34,7 @@ public class TouristaPackages {
         this.spotItinerary = spotItinerary;
         this.packDescription = packDescription;
         this.packPrice = packPrice;
+        CompanyName = companyName;
     }
 
     public String getPackageId() {
@@ -121,5 +123,13 @@ public class TouristaPackages {
 
     public void setPackPrice(String packPrice) {
         this.packPrice = packPrice;
+    }
+
+    public String getCompanyName() {
+        return CompanyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        CompanyName = companyName;
     }
 }
