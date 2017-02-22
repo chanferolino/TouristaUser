@@ -33,14 +33,7 @@
         android:layout_toEndOf="@+id/imageView3" />
 
 
-    <com.jaredrummler.materialspinner.MaterialSpinner
 
-        android:id="@+id/spinCustomLang"
-        android:layout_width="match_parent"
-
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/txt6"
-        android:layout_toEndOf="@+id/imageView3" />
 
 
     <TextView
@@ -62,23 +55,12 @@
         android:layout_alignParentStart="true"
         android:layout_toStartOf="@+id/txt6" />
 
-        <TextView
-        android:text="Select preffered Language"
-            android:layout_marginTop="15dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.AppCompat.Small"
-        android:id="@+id/txt6"
-        android:layout_below="@+id/edtCustomDate"
-        android:layout_above="@+id/spnCustomTourGuides"
-        android:layout_toEndOf="@+id/txt4"
-        android:layout_alignTop="@+id/txt4" />
 
         <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="3dp"
         android:background="@drawable/background_border"
-        android:layout_below="@+id/spinCustomLang"
+        android:layout_below="@+id/spnCustomTourGuides"
         android:id="@+id/relLay1"
         android:layout_alignParentStart="true"
         android:layout_marginTop="8dp"
@@ -166,39 +148,13 @@
             android:layout_height="wrap_content"
             android:text="Book now!"
             android:layout_below="@+id/txtCustomPrice"
+
+            android:background="@drawable/button_design"
             />
 
-        <TextView
 
-            android:text="Number of attendees"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:id="@+id/textView8"
-            android:layout_below="@+id/txtCustomDays"
-            android:layout_alignParentEnd="true" />
 
-        <com.jaredrummler.materialspinner.MaterialSpinner
-            android:id="@+id/spinPax"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/textView8"
-            android:layout_toEndOf="@+id/imageView3" />
 
-        <com.rengwuxian.materialedittext.MaterialEditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Date"
-        android:id="@+id/edtCustomDate"
-        android:focusable="false"
-        android:textSize="18sp"
-        app:met_baseColor="@android:color/black"
-        app:met_floatingLabel="highlight"
-        app:met_maxCharacters="20"
-        app:met_primaryColor="@color/tourColor"
-        app:met_singleLineEllipsis="true"
-            android:layout_below="@+id/spinPax"
-            android:layout_toEndOf="@+id/imageView3" />
 
         <com.rengwuxian.materialedittext.MaterialEditText
 
@@ -212,5 +168,15 @@
             android:layout_below="@+id/txtCustomPackName"
             android:layout_alignParentEnd="true"
             android:layout_toEndOf="@+id/txt4" />
+
+        <Button
+            android:id="@+id/btnAdd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add Spots!"
+
+            android:background="@drawable/button_design"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true" />
     </RelativeLayout>
 </ScrollView>

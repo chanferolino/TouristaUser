@@ -21,7 +21,7 @@
         android:ems="10"
         android:layout_below="@+id/textView"
         android:layout_alignParentStart="true"
-        android:id="@+id/editText"
+        android:id="@+id/edtComment"
         android:layout_alignParentEnd="true" />
 
     <CheckBox

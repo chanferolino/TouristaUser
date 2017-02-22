@@ -33,7 +33,7 @@ public class RateTourGuideActivity extends AppCompatActivity {
 
     private ArrayList<TouristaPackages> PackageList = new ArrayList<>();
     private Controllers mControllers = new Controllers();
-    private String typePackage,packageTitle;
+    private String typePackage,packageTitle,tourID,comments;
     private Button btnOkay;
     private int position;
     @Override
@@ -44,6 +44,11 @@ public class RateTourGuideActivity extends AppCompatActivity {
         position = i.getIntExtra("position", 0);
         typePackage = i.getStringExtra("type");
         packageTitle = i.getStringExtra("title");
+        tourID = i.getStringExtra("tourID");
+        comments = i.getStringExtra("comments");
+      if(comments.equals(null)){
+          comments = "No comment";
+      }
         PackageList = mControllers.getControllerPackaaes();
         for(int x = 0;x<PackageList.size();x++){
             if(PackageList.get(x).getPackageName().equals(packageTitle)){
@@ -59,25 +64,42 @@ public class RateTourGuideActivity extends AppCompatActivity {
                     JSONObject obj = new JSONObject();
                     JSONArray jarray = new JSONArray();
                     ArrayList<RatingTG> ratgList = new ArrayList<>();
-                    float ratingTG= 0 ;
-                    ratingTG = Controllers.getRatingTG();
-//                    for(int x = 0 ; x < ratgList.size() ; x++){
-//                        JSONObject j = new JSONObject();
-//                        try {
-////                    j.put("guideId",) addguideID
-//                            j.put("acts_professionaly", ratgList.get(x).getPersonality());
-//                            j.put("isknowledgable",ratgList.get(x).getKnowledge());
-//                            j.put("rightpersonality",ratgList.get(x).getPersonality());
-//                        } catch (JSONException e) {
-//
-//                            Log.d("chanRegisterActivity",e+"");
-//                            e.printStackTrace();
-//                        }
-//                        jarray.put(j);
-//                    }
+                ratgList = Controllers.getRatingTG();
+
+                Log.d("RateTGactChannix","Button Okay sud");
+                    for(int x = 0 ; x < ratgList.size() ; x++){
+                        JSONObject j = new JSONObject();
+                        Log.d("RateTGactChannix",Math.round(ratgList.get(x).getProfessional())+"");
+                        Log.d("RateTGactChannix",Math.round(ratgList.get(x).getKnowledge())+"");
+                        Log.d("RateTGactChannix",Math.round(ratgList.get(x).getPersonality())+"");
+                        Log.d("RateTGactChannix",Controllers.getPackRate()+"");
+                        try {
+                            j.put("guideId",ratgList.get(x).getGuideId());
+                            j.put("acts_professionaly", Math.round(ratgList.get(x).getProfessional()));
+                            j.put("isknowledgable",Math.round(ratgList.get(x).getKnowledge()));
+                            j.put("rightpersonality",Math.round(ratgList.get(x).getPersonality()));
+                        } catch (JSONException e) {
+
+                            Log.d("chanRegisterActivity",e+"");
+                            e.printStackTrace();
+                        }
+                        jarray.put(j);
+                        JSONObject je = new JSONObject();
+                    }
+                JSONObject je = new JSONObject();
+                try {
+                    je.put("packageId",currPack.getPackageId());
+                    je.put("rating", Math.round(Controllers.getPackRate())+"");
+                    je.put("tourTransactionId",tourID);
+                    je.put("comments",comments);
+                } catch (JSONException e) {
+
+                    Log.d("chanRegisterActivity",e+"");
+                    e.printStackTrace();
+                }
                     try {
-                        obj.put("package", Controllers.getPackRate());
-                        obj.put("guide", ratingTG);
+                        obj.put("package", je);
+                        obj.put("guide", jarray);
                     } catch (JSONException e) {
 
                         Log.d("RateTGactChan", e+"");

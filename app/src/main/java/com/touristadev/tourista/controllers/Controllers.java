@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 public class Controllers {
-    private static float ratingTg = 0;
     private static ArrayList<Spots> spotList = new ArrayList<>();
     private static ArrayList<Spots> finalSpotList = new ArrayList<>();
     private static String transactionID;
@@ -37,7 +36,7 @@ public class Controllers {
     private static ArrayList<TouristaPackages> packageList = new ArrayList<>();
     private static ArrayList<CustomizedPackage> customizedPackageList = new ArrayList<>();
     private static ArrayList<BookedPackages> BookedList = new ArrayList<>();
-    private static String finurl = "http://192.168.1.4:8888/";
+    private static String finurl = "http://192.168.2.104:8000/";
     private static ArrayList<TouristaPackages> RecentList = new ArrayList<>();
     private static FirebaseUser user;
     private static LatLng currentLocation;
@@ -48,8 +47,9 @@ public class Controllers {
     private static ArrayList<Spots> spotIt3 = new ArrayList<>();
     private static int positionwew;
     private static float ratPack;
+    private static String currentTourID;
    private static GoogleAccountCredential mCredentials = null;
-    private static ArrayList<RatingTG> ratTG = new ArrayList<>();
+    private static ArrayList<RatingTG> ratingTg = new ArrayList<>();
     private static boolean tourguidemode;
     private static BookedPackages CurrPackage = new BookedPackages();
     private static ArrayList<TourGuideModel> currTourguideList = new ArrayList<>();
@@ -68,8 +68,8 @@ public class Controllers {
 //    public static void addRatingTG(RatingTG rat){
 //        ratTG.add(rat);
 //    }
-    public static void addRatingTG(Float rat){
-        ratingTg = rat;
+    public static void addRatingTG(RatingTG rat){
+        ratingTg.add(rat);
     }
     public static float getPackRate(){
         return ratPack;
@@ -77,7 +77,7 @@ public class Controllers {
 //    public static ArrayList<RatingTG> getRatingTG(){
 //        return ratTG;
 //    }
-    public static float getRatingTG(){
+    public static ArrayList<RatingTG> getRatingTG(){
         return ratingTg;
     }
     public static double CalculationByDistance(LatLng StartP, LatLng EndP) {
@@ -110,27 +110,33 @@ public class Controllers {
     public static GoogleAccountCredential getCredentials(){
         return mCredentials;
     }
-    public static void addSpotToPackage(Spots spots,int pos){
+//    public static void addSpotToPackage(Spots spots,int pos){
+//        Log.d("SpotActivitychan","Controller : "+pos);
+//        Log.d("SpotActivitychan","Controller : "+customizedPackageList.size());
+//
+//        Log.d("SpotActivitychan","Controller : "+ customizedPackageList.get(pos).getPackageItinerary().size());
+//        customizedPackageList.get(pos).getPackageItinerary().add(new Itinerary(spots.getSpotName(),spots.getSpotOpeningTime(),spots.getSpotClosingTime(),spots.getSpotName()));
+//
+//    }
+    public static void removeSpotToPackage(int pos){
+
         Log.d("SpotActivitychan","Controller : "+pos);
-        Log.d("SpotActivitychan","Controller : "+customizedPackageList.size());
-
-        Log.d("SpotActivitychan","Controller : "+ customizedPackageList.get(pos).getPackageItinerary().size());
-        customizedPackageList.get(pos).getPackageItinerary().add(new Itinerary(spots.getSpotName(),spots.getSpotOpeningTime(),spots.getSpotClosingTime(),spots.getSpotName()));
-
+        Log.d("SpotActivitychan","Controller : "+customizedPackageList.get(pos).getPackageItinerary().size());
+        customizedPackageList.get(pos).getPackageItinerary().remove(pos);
     }
     public static void removeCustomizedPackage(int index){
         customizedPackageList.remove(index);
 
     }
     public static ArrayList<CustomizedPackage> getCustomizedPackageList(){
-//        customizedPackageList.clear();
-//        try {
-//            new GetCustomPackageList().execute().get();
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        } catch (ExecutionException e) {
-//            e.printStackTrace();
-//        }
+        customizedPackageList.clear();
+        try {
+            new GetCustomPackageList().execute().get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
 
         return customizedPackageList;
     }
@@ -302,6 +308,10 @@ public class Controllers {
         pack = new BookedPackages();
         CurrPackage = pack;
     }
+    public static void setCurrentTourID(String tourid){
+
+        currentTourID = tourid;
+    }
     public static void setCurrTourGuide(ArrayList<TourGuideModel> tgMod){
         currTourguideList.clear();
         for(int x = 0 ; x < tgMod.size();x++){
@@ -390,20 +400,19 @@ public class Controllers {
         protected ArrayList<TouristaPackages> doInBackground(Void... voids) {
             Controllers con = new Controllers();
             try {
-                JSONArray json = new JSONArray(HttpUtils.GET(finurl+"api/get-custom-package-tours?userId="+con.getCurrentUserID()+"&status=Request"));
-
-
+                JSONObject jsobj = new JSONObject(HttpUtils.GET(finurl+"api/get-custom-packages?userId="+con.getCurrentUserID()));
+                JSONArray json = jsobj.getJSONArray("custom");
                 for(int n = 0; n < json.length(); n++)
                 {
                     JSONObject object = json.getJSONObject(n);
-                    JSONArray jarray = object.getJSONArray("itineraries");
-                    for(int z = 0 ; z < jarray.length();z++){
-                        JSONObject j = jarray.getJSONObject(z);
-
-                        itineraries4.add(new Itinerary(j.getString("spotName")+" "+j.getString("description"),j.getString("startTime"),j.getString("endTime"),j.getString("spotName")));
-
-                    }
-//                    customizedPackageList.add(new CustomizedPackage(object.getString("packageId"),object.getString("packageName"),itineraries4,"Local",Integer.parseInt(object.getString("rating")),Integer.parseInt(object.getString("numOfSpots")),Integer.parseInt(object.getString("duration")),R.mipmap.ic_tourista,spotIt3,object.getString("description"),object.getString("payment")));
+//                    JSONArray jarray = object.getJSONArray("itineraries");
+//                    for(int z = 0 ; z < jarray.length();z++){
+//                        JSONObject j = jarray.getJSONObject(z);
+//
+//                        itineraries4.add(new Itinerary(j.getString("spotName")+" "+j.getString("description"),j.getString("startTime"),j.getString("endTime"),j.getString("spotName")));
+//
+//                    }
+                    customizedPackageList.add(new CustomizedPackage(object.getString("packageId"),object.getString("packageName"),object.getString("numOfTGNeeded"),object.getString("payment"),itineraries4,object.getString("numOfDays"),R.mipmap.ic_tourista,object.getString("description")));
                     // do some stuff....
                 }
             } catch (JSONException e) {
@@ -447,7 +456,8 @@ public class Controllers {
 
             TouristaPackages tourTemp = new TouristaPackages();
             try {
-                JSONArray json = new JSONArray(HttpUtils.GET(finurl+"api/get-booked-tours?userId="+con.getCurrentUserID()+"&status=Request"));
+                JSONObject jsobj = new JSONObject(HttpUtils.GET(finurl+"api/get-booked-tours?userId="+con.getCurrentUserID()+"&status=Request"));
+                JSONArray json = jsobj.getJSONArray("non-custom");
 
 
                 for(int n = 0; n < json.length(); n++)
@@ -493,7 +503,8 @@ public class Controllers {
 
             TouristaPackages tourTemp = new TouristaPackages();
             try {
-                JSONArray json = new JSONArray(HttpUtils.GET(finurl+"api/get-booked-tours?userId="+con.getCurrentUserID()+"&status=Success"));
+                JSONObject jsobj = new JSONObject(HttpUtils.GET(finurl+"api/get-booked-tours?userId="+con.getCurrentUserID()+"&status=Success"));
+                JSONArray json = jsobj.getJSONArray("non-custom");
 
                 for(int n = 0; n < json.length(); n++)
                 {
@@ -527,7 +538,7 @@ public class Controllers {
                         tourguideList.add(new TourGuideModel(je.getString("firstName")+", "+je.getString("lastName"), R.mipmap.ic_launcher,je.getString("PROFILE_DESCRIPTION"),je.getInt("ratings"),je.getString("EMAIL"),je.getString("guideId")));
 
                     }
-                    BookedList.add(new BookedPackages(object.getString("packageId"),object.getString("packageName"),itineraries4,"Local",Integer.parseInt(object.getString("rating")),jarray.length(),Integer.parseInt(object.getString("duration")),R.mipmap.ic_tourista,spotIt3,object.getString("description"),object.getString("payment"),object.getString("reserveDate"),object.getString("agencyName")));
+                    BookedList.add(new BookedPackages(object.getString("packageId"),object.getString("packageName"),itineraries4,"Local",Integer.parseInt(object.getString("rating")),jarray.length(),Integer.parseInt(object.getString("duration")),R.mipmap.ic_tourista,spotIt3,object.getString("description"),object.getString("payment"),object.getString("reserveDate"),object.getString("agencyName"),object.getString("tourTransactionId")));
                     // do some stuff....
                 }
             } catch (JSONException e) {

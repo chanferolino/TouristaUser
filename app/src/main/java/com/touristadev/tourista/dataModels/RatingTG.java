@@ -5,15 +5,24 @@ package com.touristadev.tourista.dataModels;
  */
 
 public class RatingTG {
-
+    private String guideId;
     private float knowledge;
     private float personality;
     private float professional;
 
-    public RatingTG(float knowledge, float personality, float professional) {
+    public RatingTG(String guideId, float knowledge, float personality, float professional) {
+        this.guideId = guideId;
         this.knowledge = knowledge;
         this.personality = personality;
         this.professional = professional;
+    }
+
+    public String getGuideId() {
+        return guideId;
+    }
+
+    public void setGuideId(String guideId) {
+        this.guideId = guideId;
     }
 
     public float getKnowledge() {

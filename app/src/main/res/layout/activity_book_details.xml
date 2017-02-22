@@ -28,29 +28,34 @@
         android:layout_below="@+id/bookedTitleTG"
         android:layout_alignParentStart="true" />
 
-    <Button android:layout_height="100dp"
-    android:layout_width="133dp"
-    android:text="End Tour"
-    android:id="@+id/btnEnd"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/fragment_container" />
+    <Button
+        android:text="End Tour"
 
-    <Button android:layout_height="100dp"
+        android:background="@drawable/button_design"
+        android:id="@+id/btnEnd"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
         android:text="View Itinerary"
         android:id="@+id/btnViewTour"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@+id/fragment_container"
-        android:layout_toEndOf="@+id/btnAddComment"
-        android:layout_width="125dp" />
 
-    <Button android:layout_height="100dp"
+        android:background="@drawable/button_design"
+        android:layout_height="50dp"
+        android:layout_width="120dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true" />
+
+    <Button
         android:text="Add Comment"
+
+        android:background="@drawable/button_design"
         android:id="@+id/btnAddComment"
+        android:layout_height="50dp"
         android:layout_width="125dp"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/fragment_container" />
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

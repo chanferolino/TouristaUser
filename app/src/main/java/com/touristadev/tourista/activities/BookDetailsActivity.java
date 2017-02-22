@@ -81,6 +81,7 @@ public class BookDetailsActivity extends FragmentActivity implements OnMapReadyC
     private Button btnView;
     private TextView txt_Description,txtTile;
     private RatingBar ratBarM;
+    private String comments;
     LocationRequest mLocationRequest;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,6 +125,11 @@ public class BookDetailsActivity extends FragmentActivity implements OnMapReadyC
                 i.putExtra("position", position);
                 i.putExtra("type", typePackage);
                 i.putExtra("title", packageTitle);
+                i.putExtra("tourID", packageBook.getTourTransactionId());
+                if(comments == null){
+                    comments = "No comment";
+                }
+                i.putExtra("comments", comments);
                 i.putExtra("fragtype","wish");
                 startActivity(i);
 
@@ -146,6 +152,8 @@ public class BookDetailsActivity extends FragmentActivity implements OnMapReadyC
                 AlertDialog.Builder builder = new AlertDialog.Builder(BookDetailsActivity.this);
                 LayoutInflater inflater = BookDetailsActivity.this.getLayoutInflater();
                 View layout = inflater.inflate(R.layout.alertdialog_book_details    /*my layout here*/, null);
+                TextView com = (TextView) view.findViewById(R.id.edtComment);
+                comments = com.getText().toString();
                 builder.setView(layout);
                 builder.show();
             }

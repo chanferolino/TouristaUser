@@ -7,6 +7,7 @@ import java.util.ArrayList;
  */
 
 public class CustomizedPackage {
+    private String packageId;
     private String packageName;
     private String packLanguage;
     private String packNumTourGuide;
@@ -21,7 +22,8 @@ public class CustomizedPackage {
 
     }
 
-    public CustomizedPackage(String packageName, String packLanguage, String packNumTourGuide, String packNumPax, String price, ArrayList<Itinerary> packageItinerary, int numberOfDays, int packageImage, String packDescription, String startDate) {
+    public CustomizedPackage(String packageId, String packageName, String packLanguage, String packNumTourGuide, String packNumPax, String price, ArrayList<Itinerary> packageItinerary, int numberOfDays, int packageImage, String packDescription, String startDate) {
+        this.packageId = packageId;
         this.packageName = packageName;
         this.packLanguage = packLanguage;
         this.packNumTourGuide = packNumTourGuide;
@@ -32,6 +34,14 @@ public class CustomizedPackage {
         this.packageImage = packageImage;
         this.packDescription = packDescription;
         this.startDate = startDate;
+    }
+
+    public String getPackageId() {
+        return packageId;
+    }
+
+    public void setPackageId(String packageId) {
+        this.packageId = packageId;
     }
 
     public String getPackageName() {

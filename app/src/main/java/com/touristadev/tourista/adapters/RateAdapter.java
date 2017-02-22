@@ -6,6 +6,7 @@ package com.touristadev.tourista.adapters;
 
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,7 +68,7 @@ public class RateAdapter extends RecyclerView.Adapter<RateAdapter.MyViewHolder>{
                 @Override
                 public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
                 professional =  ratingBar.getRating();
-                    flag+=1;
+                  flag++;
                 }
             });
             rtKnowledge.setFocusable(false);
@@ -75,7 +76,7 @@ public class RateAdapter extends RecyclerView.Adapter<RateAdapter.MyViewHolder>{
                 @Override
                 public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
                     knowledge =  ratingBar.getRating();
-                    flag+=1;
+                    flag++;
                 }
             });
             rtPersonality.setFocusable(false);
@@ -83,7 +84,7 @@ public class RateAdapter extends RecyclerView.Adapter<RateAdapter.MyViewHolder>{
                 @Override
                 public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
                     personality =  ratingBar.getRating();
-                    flag+=1;
+                    flag++;
                 }
             });
             rtPackage.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
@@ -93,9 +94,11 @@ public class RateAdapter extends RecyclerView.Adapter<RateAdapter.MyViewHolder>{
 
                 }
             });
+
+            Log.d("RateAdapterChannix",flag+" Flag");
             if(flag==3){
-                float rate = (knowledge+personality+professional)/2;
-                Controllers.addRatingTG(rate);
+                Log.d("RateAdapterChannix",Controllers.getTourguideList().get(getAdapterPosition())+" Position");
+                Controllers.addRatingTG(new RatingTG(Controllers.getTourguideList().get(getAdapterPosition()).getGuideId(),knowledge,personality,professional));
             }
         }
 

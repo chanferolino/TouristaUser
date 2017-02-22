@@ -206,7 +206,7 @@ Log.d("LoginAct",mFinalCredential+"");
                 obj.put("reserveDate",formattedDate);
                 obj.put("tourDate",edtDate.getText());
                 obj.put("numOfPeople",spinValue+"");
-                obj.put("status","request");
+                obj.put("status","Request");
             } catch (JSONException e) {
                 e.printStackTrace();
             }

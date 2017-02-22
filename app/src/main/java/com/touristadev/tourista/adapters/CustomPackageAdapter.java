@@ -170,7 +170,7 @@ public class CustomPackageAdapter extends RecyclerView.Adapter<CustomPackageAdap
             alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Cancel",
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            Controllers.removeWishPackage(pos);
+                            Controllers.removeCustomizedPackage(pos);
                             Intent i = new Intent(v.getContext(), TourActivity.class);
                             v.getContext().startActivity(i);
                         }

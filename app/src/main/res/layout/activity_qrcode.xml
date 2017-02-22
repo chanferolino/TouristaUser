@@ -11,13 +11,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.touristadev.tourista.activities.QRCodeActivity">
 
-    <ImageView
-        android:layout_width="wrap_content"
-        app:srcCompat="@mipmap/ic_launcher"
-        android:id="@+id/imgQRcode"
-        android:layout_alignParentStart="true"
-        android:layout_height="450dp" />
-
     <TextView
         android:text="Referral QR code"
         android:layout_width="wrap_content"
@@ -31,9 +24,20 @@
 
     <Button
         android:text="Decode"
+
+        android:background="@drawable/button_design"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/btnDecode"
         android:layout_below="@+id/textView2"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:elevation="0dp" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        app:srcCompat="@mipmap/ic_launcher"
+        android:id="@+id/imgQRcode"
+        android:layout_height="450dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
 </RelativeLayout>

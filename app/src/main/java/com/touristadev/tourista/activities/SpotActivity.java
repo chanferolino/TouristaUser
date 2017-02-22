@@ -2,6 +2,7 @@ package com.touristadev.tourista.activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +18,9 @@ import com.touristadev.tourista.R;
 import com.touristadev.tourista.controllers.Controllers;
 import com.touristadev.tourista.dataModels.CustomizedPackage;
 import com.touristadev.tourista.dataModels.Spots;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -105,17 +109,28 @@ public class SpotActivity extends AppCompatActivity {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         Log.d("SpotActivitychan", wew[0] +"");
-                                        Controllers.addSpotToPackage(spotDetails, wew[0]);
-                                        Intent i = new Intent(SpotActivity.this, CustomPackageActivity.class);
-                                        i.putExtra("title",strName);
-                                        i.putExtra("pos",wew[0]+"");
-                                        i.putExtra("type","details");
-                                        startActivity(i);
-                                        dialog.dismiss();
+//                                        Controllers.addSpotToPackage(spotDetails, wew[0]);
+                                        JSONObject obj = new JSONObject();
+                                        try {
+                                            obj.put("packageId",Controllers.getCurrentUserID());
+                                            obj.put("spotId",spotDetails.getSpotID());
+                                            obj.put("startTime",spotDetails.getSpotOpeningTime());
+                                            obj.put("description",spotDetails.getSpotDescription());
+                                            obj.put("chronology",Controllers.getCustomizedPackageList().get(which).getPackageItinerary().size()+"");
+                                            obj.put("endTime",spotDetails.getSpotClosingTime());
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                        SpotActivity.AddSpotToCustomized pr= new SpotActivity.AddSpotToCustomized();
+                                        pr.execute(obj);
+
+
+
                                     }
                                 });
                                 builderInner.show();
                             }
+
                             else{
                                 final AlertDialog.Builder builderInner = new AlertDialog.Builder(SpotActivity.this);
                                 builderInner.setMessage("Can only add maximum of 3 Spots to "+strName);
@@ -154,5 +169,20 @@ public class SpotActivity extends AppCompatActivity {
 
         // ListView Item Click Listener
 
+    }
+    public class AddSpotToCustomized extends AsyncTask<JSONObject, Void, JSONObject> {
+
+        @Override
+        protected JSONObject doInBackground(JSONObject... params) {
+
+            Controllers.postToDb("api/add-to-itinerary-details",params[0]);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject rt) {
+
+            super.onPostExecute(rt);
+        }
     }
 }

@@ -67,11 +67,13 @@ import com.google.api.services.calendar.model.EventReminder;
 import com.jaredrummler.materialspinner.MaterialSpinner;
 import com.touristadev.tourista.R;
 import com.touristadev.tourista.SingleShotLocationProvider;
+import com.touristadev.tourista.adapters.ListViewItineraryAdaper;
 import com.touristadev.tourista.controllers.Controllers;
 import com.touristadev.tourista.dataModels.CustomizedPackage;
 import com.touristadev.tourista.dataModels.Itinerary;
 import com.touristadev.tourista.dataModels.Spots;
 import com.touristadev.tourista.dataModels.TouristaPackages;
+import com.touristadev.tourista.dataModels.listViewPackItinerary;
 import com.touristadev.tourista.models.CurrentUser;
 import com.touristadev.tourista.utils.HttpUtils;
 
@@ -108,7 +110,7 @@ public class CustomPackageActivity extends AppCompatActivity implements EasyPerm
     private TextView txtPackName, txtDays, txtPrice;
     private MaterialSpinner spinLang, spinNumTG, spinPax;
     private ListView itineraryList;
-    private Button btnBook;
+    private Button btnBook,btnAdd;
     private String spinTGnum, spinLanguage, spinPaxnum;
     private Calendar myCalendar;
     private String type;
@@ -118,7 +120,7 @@ public class CustomPackageActivity extends AppCompatActivity implements EasyPerm
     private ArrayList<CustomizedPackage> customList = new ArrayList<>();
     private CustomizedPackage customData = new CustomizedPackage();
     private LocationManager mLocationManager;
-    private ArrayList<String> packItinerary = new ArrayList<>();
+    private ArrayList<listViewPackItinerary> packItinerary = new ArrayList<>();
     private ListView mListViewItinerary;
     private LocationListener mLocationListener;
     ProgressDialog mProgress;
@@ -142,6 +144,14 @@ public class CustomPackageActivity extends AppCompatActivity implements EasyPerm
         edtDate = (EditText) findViewById(R.id.edtCustomDate);
         edtDescription = (EditText) findViewById(R.id.customDesc);
         txtPackName = (TextView) findViewById(R.id.txtCustomPackName);
+        btnAdd = (Button) findViewById(R.id.btnAdd);
+        btnAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(CustomPackageActivity.this,ExploreActivity.class);
+                startActivity(i);
+            }
+        });
         txtPackName.setFocusable(true);
         txtPackName.setEnabled(true);
         txtPackName.setClickable(true);
@@ -296,7 +306,13 @@ public class CustomPackageActivity extends AppCompatActivity implements EasyPerm
             spinLang.setEnabled(true);
             spinNumTG.setEnabled(true);
             spinPax.setEnabled(true);
-            imgV.setOnClickListener(null);
+            imgV.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent i = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    startActivityForResult(i, RESULT_LOAD_IMAGE);
+                }
+            });
             txtPackName.setFocusable(true);
             txtPackName.setEnabled(true);
             txtPackName.setClickable(true);
@@ -352,11 +368,12 @@ public class CustomPackageActivity extends AppCompatActivity implements EasyPerm
             String spot_name;
 
             for (int x = 0; x < customData.getPackageItinerary().size(); x++) {
-                packItinerary.add(customData.getPackageItinerary().get(x).getStartTime() + "\t\t\t\t " + customData.getPackageItinerary().get(x).getEndTime() + "\t\t\t\t " + customData.getPackageItinerary().get(x).getSpotID() + "\t\t\t\t");
+                packItinerary.add(new listViewPackItinerary(customData.getPackageItinerary().get(x).getStartTime() + "\t\t\t\t " + customData.getPackageItinerary().get(x).getEndTime() + "\t\t\t\t " + customData.getPackageItinerary().get(x).getSpotID() + "\t\t\t\t",2));
 
             }
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                    android.R.layout.simple_list_item_1, android.R.id.text1, packItinerary);
+//            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+//                    android.R.layout.simple_list_item_1, android.R.id.text1, packItinerary);
+            ListViewItineraryAdaper adapter = new ListViewItineraryAdaper(this, R.layout.listview_itinerary, packItinerary);
             mListViewItinerary = (ListView) findViewById(R.id.CustomPackageItineraryListView);
             mListViewItinerary.setAdapter(adapter);
 
@@ -453,10 +470,22 @@ public class CustomPackageActivity extends AppCompatActivity implements EasyPerm
                 if (type.equals("create")) {
                     ArrayList<Itinerary> tempo = new ArrayList<>();
                     CustomizedPackage cust = new CustomizedPackage(txtPackName.getText().toString(), spinLanguage, spinTGnum, spinPaxnum, "0", tempo, Integer.parseInt(txtDays.getText().toString()), R.mipmap.ic_tourista, edtDescription.getText().toString(), edtDate.getText().toString());
-                    Controllers.addCustomizedPackage(cust);
+//                    Controllers.addCustomizedPackage(cust);
 
-                    Intent i = new Intent(CustomPackageActivity.this, TourActivity.class);
-                    startActivity(i);
+                    JSONObject obj = new JSONObject();
+                    try {
+                        obj.put("userId",Controllers.getCurrentUserID());
+                        obj.put("packageName", txtPackName.getText().toString());
+                        obj.put("numOfTGNeeded", spinTGnum);
+                        obj.put("description", edtDescription.getText().toString());
+                        obj.put("numOfDays", txtDays.getText().toString());
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    CustomPackageActivity.CreateCustom pr = new CustomPackageActivity.CreateCustom();
+                    pr.execute(obj);
+
                 } else {
 
                     Log.d("CustomPackageChan", "Sud!Create1 :");
@@ -654,6 +683,8 @@ public class CustomPackageActivity extends AppCompatActivity implements EasyPerm
                 if(custList.get(Integer.parseInt(pos))!=null){
                     Controllers.removeCustomizedPackage(Integer.parseInt(pos));
                 }
+                Intent i = new Intent(CustomPackageActivity.this, TourActivity.class);
+                startActivity(i);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -666,27 +697,9 @@ public class CustomPackageActivity extends AppCompatActivity implements EasyPerm
             chooseAccount();
         } else if (! isDeviceOnline()) {
             edtDate.setText("No network connection available.");
-        } else {
-            if(customData.getPackageItinerary()==null) {
-                Calendar c = Calendar.getInstance();
-                System.out.println("Current time => " + c.getTime());
-
-                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-                String formattedDate = df.format(c.getTime());
-
-                JSONObject obj = new JSONObject();
-                try {
-                    obj.put("userId",Controllers.getCurrentUserID());
-                    obj.put("packageName", txtPackName.getText().toString());
-                    obj.put("numOfTGNeeded", spinTGnum);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                CustomPackageActivity.POSTRequestPackage pr = new CustomPackageActivity.POSTRequestPackage();
-                pr.execute(obj);
-
-            }
-
+        } else{
+            CustomPackageActivity.MakeRequestTask mak = new CustomPackageActivity.MakeRequestTask(mFinalCredential);
+            mak.execute();
         }
     }
     @AfterPermissionGranted(REQUEST_PERMISSION_GET_ACCOUNTS)
@@ -985,7 +998,7 @@ public class CustomPackageActivity extends AppCompatActivity implements EasyPerm
 
         }}
 
-    public class POSTRequestPackage extends AsyncTask<JSONObject, Void, String> {
+    public class CreateCustom extends AsyncTask<JSONObject, Void, String> {
 
         @Override
         protected String doInBackground(JSONObject... params) {
@@ -996,8 +1009,9 @@ public class CustomPackageActivity extends AppCompatActivity implements EasyPerm
 
         @Override
         protected void onPostExecute(String rt) {
-            CustomPackageActivity.MakeRequestTask mak = new CustomPackageActivity.MakeRequestTask(mFinalCredential);
-            mak.execute();
+
+            Intent i = new Intent(CustomPackageActivity.this, TourActivity.class);
+            startActivity(i);
             super.onPostExecute(rt);
         }
     }

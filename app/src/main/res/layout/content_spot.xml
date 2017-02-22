@@ -114,6 +114,7 @@
         android:layout_width="wrap_content"
         android:id="@+id/btnBook"
         android:text="Book now!"
+        android:background="@drawable/button_design"
         android:layout_below="@+id/txtTGSpotDesc"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
